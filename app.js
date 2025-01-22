@@ -15,10 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Audio Resources
     const audio = {
-        notification: new Audio('notification.mp3'),
-        switchOn: new Audio('SwitchOnEdit.mp3'),
-        switchOff: new Audio('SwitchOffEdit.mp3'),
-        reminderDismiss: new Audio('ReminderButton.mp3')
+        notification: new Audio('sounds/notification.mp3'),
+        switchOn: new Audio('sounds/SwitchOnEdit.mp3'),
+        switchOff: new Audio('sounds/SwitchOffEdit.mp3'),
+        reminderDismiss: new Audio('sounds/ReminderButton.mp3'),
+        trash: new Audio('sounds/Trashed.mp3'),
+        taskComplete: new Audio('sounds/Scratch3.mp3'),
+        clearAll: new Audio('sounds/Scratch1.mp3')
     };
 
     // Data Stores
@@ -310,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Create/reuse audio element
         if (!notificationSound) {
-            notificationSound = new Audio('notification.mp3');
+            notificationSound = new Audio('sounds/notification.mp3');
             notificationSound.loop = true;
         }
         
@@ -339,8 +342,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     void notificationCard.offsetWidth;
                     notificationCard.classList.remove('shaking');
                     void notificationCard.offsetWidth;
-                    notificationCard.classList.add('shaking');
-                }, 2320); // Shake every 2.32 seconds
+                    notificationCard.classLgist.add('shaking');
+                }, 2300); // Shake every 2.30 seconds
             };
 
             // Start shaking
