@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Audio Resources
     const audio = {
-        notification: new Audio('notification.mp3')
+        notification: new Audio('notification.mp3'),
+        switchOn: new Audio('SwitchOnEdit.mp3'),
+        switchOff: new Audio('SwitchOffEdit.mp3'),
+        reminderDismiss: new Audio('ReminderButton.mp3')
     };
 
     // Data Stores
@@ -354,6 +357,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 notification.remove();
                 notificationSound.pause();
                 notificationSound.currentTime = 0;
+                
+                // Play dismiss sound
+                audio.reminderDismiss.currentTime = 0;
+                audio.reminderDismiss.play().catch(error => {
+                    console.error('Error playing dismiss sound:', error);
+                });
             });
 
         }).catch(error => {
@@ -615,8 +624,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleThemeToggle() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        
+        // Play appropriate sound effect first
+        const sound = newTheme === 'dark' ? audio.switchOff : audio.switchOn;
+        sound.currentTime = 0; // Rewind to start
+        sound.play().catch(error => {
+            console.error('Error playing theme switch sound:', error);
+        });
+        
+        // Update theme after sound starts
+        setTimeout(() => {
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }, 130);
     }
 
     // Update the interval to only update when needed
