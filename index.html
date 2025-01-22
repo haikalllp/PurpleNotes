@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes & Tasks App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">✎</span>
+                    <h1>Purple Notes</h1>
+                </div>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+                    <span class="light-mode" aria-hidden="true"></span>
+                    <span class="dark-mode" aria-hidden="true"></span>
+                </button>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="main-layout">
+                <section class="notes-section">
+                    <div class="section-header">
+                        <h2>Notes</h2>
+                        <button class="clear-btn" onclick="clearAllNotes()">
+                            <span class="clear-icon">×</span>
+                            <span>Clear All</span>
+                        </button>
+                    </div>
+                    
+                    <form id="noteForm" class="note-form">
+                        <div class="form-group">
+                            <input type="text" id="noteTitle" placeholder="Note title" required autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="noteContent" placeholder="Write your note here..." required autocomplete="off"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <div class="reminder-toggle">
+                                <label for="enableReminder" class="reminder-label">
+                                    <input type="checkbox" id="enableReminder">
+                                    <span>Set Reminder</span>
+                                </label>
+                                <input type="datetime-local" id="noteReminder" class="reminder-input" aria-label="Set reminder date and time">
+                            </div>
+                            <button type="submit" class="primary-btn add-note-btn">Add Note</button>
+                        </div>
+                    </form>
+
+                    <div id="notesContainer" class="notes-container">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <span>Loading notes...</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="section-divider"></div>
+
+                <section class="tasks-section">
+                    <div class="section-header">
+                        <h2>Tasks</h2>
+                        <button class="clear-btn" onclick="clearAllTasks()">
+                            <span class="clear-icon">×</span>
+                            <span>Clear All</span>
+                        </button>
+                    </div>
+
+                    <form id="taskForm" class="task-form">
+                        <div class="form-group">
+                            <input type="text" id="taskInput" placeholder="What needs to be done?" required autocomplete="off">
+                            <button type="submit" class="primary-btn">Add Task</button>
+                        </div>
+                    </form>
+
+                    <ul id="taskList" class="task-list">
+                        <div class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <span>Loading tasks...</span>
+                        </div>
+                    </ul>
+                </section>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2025 Purple Notes - Shrewdy. All rights reserved.</p>
+            <button class="clear-cache-btn">Clear Cache</button>
+        </footer>
+    </div>
+
+    <template id="note-template">
+        <div class="note-card">
+            <div class="note-header">
+                <h3 class="note-title"></h3>
+                <button class="pin-button" aria-label="Pin note">
+                    <span class="pin-icon"></span>
+                </button>
+            </div>
+            <p class="note-content"></p>
+            <div class="reminder-info">
+                <div class="reminder-status"></div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="note-meta">
+                <div class="note-date"></div>
+                <div class="note-actions">
+                    <button class="delete-btn" aria-label="Delete note">
+                        <span class="delete-icon">×</span>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="task-template">
+        <li class="task-item">
+            <label class="task-label">
+                <input type="checkbox">
+                <span class="task-text"></span>
+            </label>
+            <button class="task-delete-btn" aria-label="Delete task">×</button>
+        </li>
+    </template>
+
+    <template id="notification-template">
+        <div class="notification-overlay">
+            <div class="notification-card">
+                <div class="notification-header">
+                    <h3 class="notification-title"></h3>
+                    <div class="notification-time"></div>
+                </div>
+                <div class="notification-body">
+                    <p></p>
+                </div>
+                <div class="notification-footer">
+                    <button class="primary-btn notification-continue">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="confirmation-template">
+        <div class="confirmation-dialog">
+            <div class="confirmation-content">
+                <div class="confirmation-header">
+                    <p></p>
+                    <span class="subtext">Pinned notes will be unpinned and deleted as well.</span>
+                </div>
+                <div class="confirmation-buttons">
+                    <button class="confirm-btn">Yes, Delete</button>
+                    <button class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <audio id="notificationSound" src="notification.mp3"></audio>
+    <script src="app.js"></script>
+</body>
+</html>
