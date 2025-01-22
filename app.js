@@ -223,10 +223,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayTasks() {
         DOM.taskList.innerHTML = '';
-        tasks.forEach(task => {
+        tasks.forEach((task, index) => {
             const taskElement = document.createElement('li');
             taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
             taskElement.dataset.taskId = task.id;
+            taskElement.draggable = true;
+            taskElement.dataset.index = index;
+
+            // Drag and Drop Event Handlers
+            taskElement.addEventListener('dragstart', handleDragStart);
+            taskElement.addEventListener('dragover', handleDragOver);
+            taskElement.addEventListener('dragenter', handleDragEnter);
+            taskElement.addEventListener('dragleave', handleDragLeave);
+            taskElement.addEventListener('drop', handleDrop);
+            taskElement.addEventListener('dragend', handleDragEnd);
             taskElement.innerHTML = `
                 <label class="task-label">
                     <input type="checkbox" ${task.completed ? 'checked' : ''}>
@@ -529,6 +539,71 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Add clear cache button event listener
         document.querySelector('.clear-cache-btn')?.addEventListener('click', clearCache);
+    }
+
+    // Drag and Drop Functions
+    let dragStartIndex;
+
+    function handleDragStart(e) {
+        dragStartIndex = +this.dataset.index;
+        this.classList.add('dragging');
+        setTimeout(() => this.classList.add('ghost'), 0);
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        const draggingElement = document.querySelector('.dragging');
+        const dropTarget = getDropTarget(e.clientY);
+        
+        if (dropTarget) {
+            const rect = dropTarget.getBoundingClientRect();
+            const offset = e.clientY - rect.top;
+            const middle = rect.height / 2;
+            
+            dropTarget.classList.remove('drop-target-above', 'drop-target-below');
+            dropTarget.classList.add(offset < middle ? 'drop-target-above' : 'drop-target-below');
+        }
+    }
+
+    function handleDragEnter(e) {
+        e.preventDefault();
+        this.classList.add('drop-target');
+    }
+
+    function handleDragLeave() {
+        this.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
+    }
+
+    function handleDrop() {
+        const dragEndIndex = +this.dataset.index;
+        swapTasks(dragStartIndex, dragEndIndex);
+        this.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
+    }
+
+    function handleDragEnd() {
+        this.classList.remove('dragging', 'ghost');
+        displayTasks(); // Refresh to clear any drop target styles
+    }
+
+    function getDropTarget(y) {
+        const taskElements = [...document.querySelectorAll('.task-item:not(.dragging)')];
+        return taskElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function swapTasks(fromIndex, toIndex) {
+        const taskToMove = tasks[fromIndex];
+        tasks.splice(fromIndex, 1);
+        tasks.splice(toIndex, 0, taskToMove);
+        StorageService.saveTasks();
     }
 
     // Start the application

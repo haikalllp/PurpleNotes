@@ -704,6 +704,35 @@ textarea {
     align-items: center;
     justify-content: space-between;
     transition: var(--transition);
+    cursor: grab;
+    user-select: none;
+}
+
+.task-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+    box-shadow: var(--shadow-lg);
+    cursor: grabbing;
+}
+
+.task-item.drop-target {
+    border: 2px dashed var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.task-item.drop-target-above {
+    border-top: 2px solid var(--primary);
+    margin-top: var(--space-4);
+}
+
+.task-item.drop-target-below {
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: var(--space-4);
+}
+
+.task-item.ghost {
+    opacity: 0;
+    transform: scale(0.9);
 }
 
 .task-item.completed .task-text {
