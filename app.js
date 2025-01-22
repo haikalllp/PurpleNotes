@@ -210,17 +210,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (deleteBtn) {
                 deleteBtn.addEventListener('click', () => {
                     if (!note.pinned) {
+                         // Play trash sound
+                         audio.trash.currentTime = 0.35;
+                         audio.trash.volume = 0.35; // ~5dB reduction
+                         audio.trash.play().catch(error => {
+                             console.error('Error playing trash sound:', error);
+                         });
+
                         // Add fade-out class first
                         noteElement.classList.add('fade-out');
                         
                         // Wait for animation to complete before removing
                         noteElement.addEventListener('animationend', () => {
-                            // Play trash sound
-                            audio.trash.currentTime = 0.7;
-                            audio.trash.volume = 0.56; // ~5dB reduction
-                            audio.trash.play().catch(error => {
-                                console.error('Error playing trash sound:', error);
-                            });
                             
                             notes = notes.filter(n => n.id !== note.id);
                             StorageService.saveNotes();
@@ -260,26 +261,27 @@ document.addEventListener('DOMContentLoaded', () => {
             
             taskElement.querySelector('input').addEventListener('change', (e) => {
                 task.completed = e.target.checked;
-                StorageService.saveTasks();
-                taskElement.classList.toggle('completed', task.completed);
-                displayTasks(); // Refresh to show/hide delete button
-                
-                // Play task complete sound
-                if (task.completed) {
-                    audio.taskComplete.currentTime = 0.35;
-                    audio.taskComplete.volume = 0.45; // ~7dB reduction
+                 // Play task complete sound
+                 if (task.completed) {
+                    audio.taskComplete.currentTime = 0.12;
+                    audio.taskComplete.volume = 0.10; // ~7dB reduction
                     audio.taskComplete.play().catch(error => {
                         console.error('Error playing task complete sound:', error);
                     });
                 }
+                StorageService.saveTasks();
+                taskElement.classList.toggle('completed', task.completed);
+
+                displayTasks(); // Refresh to show/hide delete button
+                
             });
 
             const deleteBtn = taskElement.querySelector('.task-delete-btn');
             if (deleteBtn) {
                 deleteBtn.addEventListener('click', () => {
                     // Play trash sound
-                    audio.trash.currentTime = 0.7;
-                    audio.trash.volume = 0.1; // ~10dB reduction
+                    audio.trash.currentTime = 0.35;
+                    audio.trash.volume = 0.35; // ~10dB reduction
                     audio.trash.play().catch(error => {
                         console.error('Error playing trash sound:', error);
                     });
@@ -489,6 +491,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Animate out
             confirmationElement.style.opacity = '0';
             confirmationElement.querySelector('.confirmation-content').style.transform = 'scale(0.95) translateY(10px)';
+            // Play clear all sound immediately
+        audio.clearAll.currentTime = 0.6;
+        audio.clearAll.play().catch(error => {
+            console.error('Error playing clear all sound:', error);
+        });
             
             setTimeout(() => {
                 confirmationElement.remove();
@@ -509,43 +516,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+     // Expose clear functions to global scope
+     window.clearAllNotes = clearAllNotes;
+     window.clearAllTasks = clearAllTasks;
+
     function clearAllNotes() {
+        
         showConfirmationDialog('Are you sure you want to delete all notes?', (confirmed) => {
             if (confirmed) {
-                // Play clear all sound
-                audio.clearAll.currentTime = 0.5;
-                setTimeout(() => {
-                    audio.clearAll.play().catch(error => {
-                        console.error('Error playing clear all sound:', error);
-                    });
-                }, -1400); // Play 1.4 seconds earlier
                 notes = [];
                 StorageService.saveNotes();
                 displayNotes();
+            } else {
+                // Stop sound if user cancels
+                audio.clearAll.pause();
+                audio.clearAll.currentTime = 0;
             }
         });
     }
 
     function clearAllTasks() {
+        
         showConfirmationDialog('Are you sure you want to delete all tasks?', (confirmed) => {
             if (confirmed) {
-                // Play clear all sound
-                audio.clearAll.currentTime = 0.5;
-                setTimeout(() => {
-                    audio.clearAll.play().catch(error => {
-                        console.error('Error playing clear all sound:', error);
-                    });
-                }, -1000); // Play 0.5 second earlier
                 tasks = [];
                 StorageService.saveTasks();
                 displayTasks();
+            } else {
+                // Stop sound if user cancels
+                audio.clearAll.pause();
+                audio.clearAll.currentTime = 0;
             }
         });
     }
-
-    // Expose clear functions to global scope
-    window.clearAllNotes = clearAllNotes;
-    window.clearAllTasks = clearAllTasks;
 
     // Initialize event listeners
     function initEventListeners() {
