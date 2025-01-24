@@ -366,8 +366,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     void notificationCard.offsetWidth;
                     notificationCard.classList.remove('shaking');
                     void notificationCard.offsetWidth;
-                    notificationCard.classLgist.add('shaking');
-                }, 2300); // Shake every 2.30 seconds
+                    notificationCard.classList.add('shaking');
+                }, 400); // Shake every 400ms to match animation duration
             };
 
             // Start shaking
