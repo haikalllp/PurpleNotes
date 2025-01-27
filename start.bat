@@ -42,4 +42,4 @@ if %errorlevel% equ 0 (
 
 echo No supported browsers found for app mode.
 echo Opening in default browser...
-start "" http://localhost:5500
+start "" -app=http://localhost:5500
