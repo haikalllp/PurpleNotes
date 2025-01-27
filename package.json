@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "npx live-server --port=5500 --no-browser",
-    "dev": "npx live-server --port=5500"
+    "dev": "npx live-server --port=5500 --no-browser"
   },
   "author": "Shrewdy",
   "license": "MIT",
