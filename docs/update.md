@@ -2,17 +2,42 @@
 
 ## Latest Changes (January 28, 2025)
 
-### 1. New Server Setup
+### 1. Project Organization
+- ✅ Created docs folder for documentation
+- ✅ Renamed instructions.html to howtorun.html
+- ✅ Improved project structure
+- ✅ Updated file references
+
+### 2. Server Setup
 - ✅ Added npm-based live-server setup
 - ✅ Created auto-start batch file
 - ✅ Updated shortcut to use batch file
 - ✅ Added package.json with scripts
 
-### 2. Run Options
+### 3. Project Structure
+```
+purple-notes/
+├── src/               # Source code
+│   ├── components/    # UI components
+│   ├── models/       # Data models
+│   ├── services/     # Core services
+│   └── utils/        # Utility functions
+├── docs/             # Documentation
+│   ├── architecture.md  # System design
+│   └── update.md       # Change log
+├── sounds/           # Audio assets
+├── icons/           # Visual assets
+├── README.md        # Project overview
+├── howtorun.html    # Setup instructions
+├── package.json     # Dependencies & scripts
+└── start.bat       # Auto-start script
+```
 
-#### Primary Method (New)
+### 4. Run Options
+
+#### Primary Method (Recommended)
 ```bash
-# Using start.bat (Recommended)
+# Using start.bat
 - Double-click start.bat
 - Auto-installs dependencies
 - Opens browser automatically
@@ -30,13 +55,17 @@ npm run dev
 - Right-click index.html
 - Select "Open with Live Server"
 
-### 3. Documentation Updates
-- ✅ Updated instructions.html with npm setup
-- ✅ Added comprehensive README.md
-- ✅ Improved error handling
-- ✅ Added troubleshooting guide
+### 5. Documentation Updates
 
-### 4. Fixed Issues
+#### Moved to docs/
+- architecture.md: System design and structure
+- update.md: Change log and updates
+
+#### Root Level
+- README.md: Project overview and quick start
+- howtorun.html: User-friendly setup guide
+
+### 6. Fixed Issues
 
 #### Core Functionality
 - ✅ Notes loading properly
@@ -51,7 +80,7 @@ npm run dev
 - ✅ Automated server startup
 - ✅ Improved error messaging
 
-### 5. Development Setup
+### 7. Development Setup
 
 #### Dependencies
 ```json
@@ -72,44 +101,7 @@ npm run dev
 }
 ```
 
-### 6. Project Structure
-```
-purple-notes/
-├── src/               # Source code
-├── package.json       # Dependencies and scripts
-├── start.bat         # Auto-start script
-├── README.md         # Project documentation
-├── instructions.html # Run instructions
-└── index.html        # Main entry point
-```
-
-### 7. Architecture Improvements
-- Maintained modular code structure
-- Improved error handling
-- Enhanced documentation
-- Added automated setup
-
-### 8. Next Steps
-
-#### Immediate
-1. Consider adding offline support
-2. Add installation script for other platforms
-3. Add error recovery mechanisms
-4. Improve loading states
-
-#### Future Enhancements
-1. Add cloud sync capability
-2. Implement data export/import
-3. Add note categories
-4. Add search functionality
-
-### 9. Browser Support
-- Chrome (Latest)
-- Firefox (Latest)
-- Edge (Latest)
-- Safari (Latest)
-
-### 10. Testing Procedures
+### 8. Testing Procedures
 
 #### Server Setup
 1. Test auto-start script
@@ -125,10 +117,6 @@ purple-notes/
 ```bash
 npm install
 npm run dev
-# Should:
-# - Install dependencies
-# - Start server
-# - Open browser
 ```
 
 #### Functionality Testing
@@ -148,18 +136,13 @@ npm run dev
    - Persistence
    - Transitions
 
-4. Data
-   - Persistence
-   - Cache clearing
-   - Error recovery
-
-### 11. Known Limitations
+### 9. Known Limitations
 1. Requires Node.js installed
 2. Requires local server
 3. Cannot open index.html directly
 4. Requires modern browser
 
-### 12. Support
+### 10. Support
 
 #### Common Issues
 1. Server Port Conflict
@@ -176,8 +159,4 @@ npm run dev
    - Verify not in private mode
    - Clear cache if needed
 
-For additional support:
-1. Check console for errors
-2. Verify Node.js installation
-3. Check npm dependencies
-4. Verify file permissions
+For more detailed architecture information, see docs/architecture.md

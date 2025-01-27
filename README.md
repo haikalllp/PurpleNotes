@@ -2,40 +2,20 @@
 
 A browser-based notes and tasks application with reminders and theme support.
 
-## How to Run the Application
+## Quick Start
 
-### Method 1: Using VS Code Live Server (Recommended)
-1. Install the "Live Server" extension in VS Code
-   - Click the Extensions icon in the sidebar
-   - Search for "Live Server"
-   - Install "Live Server" by Ritwick Dey
+1. **Automatic Start (Recommended)**
+   - Double-click `start.bat`
+   - The application will install dependencies and open automatically
 
-2. Open with Live Server
-   - Right-click on `index.html`
-   - Select "Open with Live Server"
-   - The app will open in your default browser at `http://127.0.0.1:5500`
+2. **Manual Start**
+   ```bash
+   # Install dependencies
+   npm install
 
-### Method 2: Using any Local Server
-You can use any of these methods to serve the application:
-
-```bash
-# Using Python 3
-python -m http.server 8000
-
-# Using Python 2
-python -m SimpleHTTPServer 8000
-
-# Using Node.js
-npx live-server
-
-# Using PHP
-php -S localhost:8000
-```
-
-Then open your browser to the corresponding localhost address.
-
-## Important Note
-Due to browser security restrictions on ES modules, the application must be served through a web server. Opening the `index.html` file directly in a browser will not work.
+   # Start development server
+   npm run dev
+   ```
 
 ## Features
 - Create and manage notes with reminders
@@ -43,6 +23,45 @@ Due to browser security restrictions on ES modules, the application must be serv
 - Light and dark theme support
 - Data persistence using localStorage
 - Responsive design for all devices
+
+## Development Setup
+
+### Prerequisites
+- Node.js and npm installed
+- Modern web browser (Chrome, Firefox, Edge, or Safari)
+
+### Available Scripts
+- `npm run dev` - Starts the development server with auto-reload
+- `npm start` - Starts the server without opening browser
+
+### Project Structure
+```
+purple-notes/
+├── src/
+│   ├── components/     # UI components
+│   ├── models/        # Data models
+│   ├── services/      # Application services
+│   └── utils/         # Utility functions
+├── styles.css         # Global styles
+├── app.js            # Application entry point
+└── index.html        # Main HTML file
+```
+
+## Alternative Run Methods
+
+### Using VS Code Live Server
+1. Install "Live Server" extension
+2. Right-click `index.html`
+3. Select "Open with Live Server"
+
+### Using Python HTTP Server
+```bash
+# Python 3
+python -m http.server 5500
+
+# Python 2
+python -m SimpleHTTPServer 5500
+```
 
 ## Browser Support
 - Chrome (Latest)
@@ -54,3 +73,25 @@ Due to browser security restrictions on ES modules, the application must be serv
 - `Ctrl/Cmd + N`: Focus note input
 - `Ctrl/Cmd + T`: Focus task input
 - `Escape`: Close dialogs
+
+## Important Notes
+- The application requires a local server due to ES module restrictions
+- Data is stored in browser's localStorage
+- Clear cache to reset all data
+
+## Troubleshooting
+
+### Common Issues
+1. **Module loading errors**
+   - Ensure you're running through a local server
+   - Don't open index.html directly in browser
+
+2. **Data not persisting**
+   - Check if localStorage is enabled
+   - Ensure you're not in private/incognito mode
+
+3. **Server already in use**
+   - Check if another server is running on port 5500
+   - Close other instances or use a different port
+
+For more detailed information, see instructions.html in the project directory.
