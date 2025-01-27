@@ -42,14 +42,6 @@ if %errorlevel% equ 0 (
     exit /b
 )
 
-:: Attempt app mode with default browser (may not work)
-echo Attempting app mode with default browser...
-start "" "http://localhost:5500" --app
-timeout /t 2 >nul
-
-:: Fallback to normal mode if app mode fails
-tasklist /FI "WINDOWTITLE eq localhost:5500" 2>nul | find /I "localhost:5500" >nul
-if %errorlevel% neq 0 (
-    echo App mode not supported. Opening in normal mode...
-    start "" "http://localhost:5500"
-)
+:: Fallback to default browser (without app mode)
+echo Opening in default browser...
+start "" "http://localhost:5500"
