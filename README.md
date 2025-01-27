@@ -102,4 +102,4 @@ python -m SimpleHTTPServer 5500
    - Check if another server is running on port 5500
    - Close other instances or use a different port
 
-For more detailed information, see instructions.html in the project directory.
+For more detailed information, see howToRun.html in the project directory.

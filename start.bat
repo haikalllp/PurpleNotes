@@ -24,6 +24,10 @@ if not exist "node_modules\" (
     echo Dependencies already installed.
 )
 
+:: Kill any existing node processes
+echo Closing any existing servers...
+taskkill /F /IM node.exe >nul 2>&1
+
 :: Start the development server in background
 echo Starting Purple Notes...
 start "Server" /B npm run dev
@@ -83,6 +87,9 @@ if /i "!USE_APP_MODE!"=="y" (
     start "" "!BROWSER_PATH!" --app="http://localhost:5500"
     timeout /t 2 >nul
     
+    :: Hide the terminal window
+    powershell -command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Application]::EnableVisualStyles(); $window = (Get-Process -Id $PID).MainWindowHandle; [System.Windows.Forms.NativeWindow]::FromHandle($window).Hide()"
+
     :: Get browser process ID for cleanup
     for /f "tokens=2" %%a in ('tasklist /FI "IMAGENAME eq brave.exe" /FO LIST ^| find "PID:"') do set BROWSER_PID=%%a
     if not defined BROWSER_PID (
@@ -111,6 +118,9 @@ if /i "!USE_APP_MODE!"=="y" (
 :DEFAULT_BROWSER
 echo Opening in default browser...
 start "" "http://localhost:5500"
+
+:: Hide the terminal window
+powershell -command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Application]::EnableVisualStyles(); $window = (Get-Process -Id $PID).MainWindowHandle; [System.Windows.Forms.NativeWindow]::FromHandle($window).Hide()"
 
 :: Wait for default browser to close
 echo Waiting for browser to close...
