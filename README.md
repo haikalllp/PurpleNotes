@@ -9,6 +9,7 @@ A browser-based notes and tasks application with reminders and theme support.
    - The application will install dependencies and open automatically
 
 2. **Manual Start**
+
    ```bash
    # Install dependencies
    npm install
@@ -18,6 +19,7 @@ A browser-based notes and tasks application with reminders and theme support.
    ```
 
 ## Features
+
 - Create and manage notes with reminders
 - Create and organize tasks with drag-and-drop
 - Light and dark theme support
@@ -27,15 +29,17 @@ A browser-based notes and tasks application with reminders and theme support.
 ## Development Setup
 
 ### Prerequisites
+
 - Node.js and npm installed
 - Modern web browser (Chrome, Firefox, Edge, or Safari)
 
 ### Available Scripts
+
 - `npm run dev` - Starts the development server with auto-reload
 - `npm start` - Starts the server without opening browser
 
 ### Project Structure
-```
+
 purple-notes/
 ├── src/
 │   ├── components/     # UI components
@@ -45,8 +49,8 @@ purple-notes/
 ├── styles.css         # Global styles
 ├── app.js            # Application entry point
 └── index.html        # Main HTML file
-```
 
+```
 ## Alternative Run Methods
 
 ### Using VS Code Live Server
@@ -64,17 +68,20 @@ python -m SimpleHTTPServer 5500
 ```
 
 ## Browser Support
+
 - Chrome (Latest)
 - Firefox (Latest)
 - Edge (Latest)
 - Safari (Latest)
 
 ## Keyboard Shortcuts
+
 - `Ctrl/Cmd + N`: Focus note input
 - `Ctrl/Cmd + T`: Focus task input
 - `Escape`: Close dialogs
 
 ## Important Notes
+
 - The application requires a local server due to ES module restrictions
 - Data is stored in browser's localStorage
 - Clear cache to reset all data
@@ -82,6 +89,7 @@ python -m SimpleHTTPServer 5500
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Module loading errors**
    - Ensure you're running through a local server
    - Don't open index.html directly in browser
