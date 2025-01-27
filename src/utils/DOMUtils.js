@@ -18,6 +18,9 @@ export const DOMUtils = {
     getElement(id) {
         if (!elementCache[id]) {
             elementCache[id] = document.getElementById(id);
+            if (!elementCache[id]) {
+                throw new Error(`Element with id '${id}' not found`);
+            }
         }
         return elementCache[id];
     },
@@ -82,6 +85,11 @@ export const DOMUtils = {
     showConfirmation({ message, subtext, confirmText = 'Yes, Delete', cancelText = 'Cancel' }) {
         return new Promise(resolve => {
             const template = document.getElementById('confirmation-template');
+            if (!template) {
+                console.error('Confirmation template not found, falling back to native confirm');
+                return resolve(confirm(message));
+            }
+
             const dialog = template.content.cloneNode(true);
             
             // Set content
@@ -100,36 +108,84 @@ export const DOMUtils = {
             
             document.body.appendChild(dialog);
             
-            const confirmationElement = document.querySelector('.confirmation-dialog');
+            const confirmationEl = document.querySelector('.confirmation-dialog');
             
             // Animation setup
-            confirmationElement.style.opacity = '0';
-            const content = confirmationElement.querySelector('.confirmation-content');
+            confirmationEl.style.opacity = '0';
+            const content = confirmationEl.querySelector('.confirmation-content');
             content.style.transform = 'scale(0.95) translateY(10px)';
             
             // Animate in
             requestAnimationFrame(() => {
-                confirmationElement.style.opacity = '1';
+                confirmationEl.style.opacity = '1';
                 content.style.transform = 'scale(1) translateY(0)';
+            });
+
+            // Handle backdrop click
+            confirmationEl.addEventListener('click', (e) => {
+                if (e.target === confirmationEl) {
+                    handleChoice(false);
+                }
             });
             
             // Handle user choice
             const handleChoice = (confirmed) => {
                 // Animate out
-                confirmationElement.style.opacity = '0';
+                confirmationEl.style.opacity = '0';
                 content.style.transform = 'scale(0.95) translateY(10px)';
                 
                 setTimeout(() => {
-                    confirmationElement.remove();
+                    confirmationEl.remove();
                     resolve(confirmed);
                 }, 200);
             };
             
-            confirmationElement.querySelector('.confirm-btn')
+            confirmationEl.querySelector('.confirm-btn')
                 .addEventListener('click', () => handleChoice(true));
             
-            confirmationElement.querySelector('.cancel-btn')
+            confirmationEl.querySelector('.cancel-btn')
                 .addEventListener('click', () => handleChoice(false));
+
+            // Handle escape key
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    handleChoice(false);
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
         });
+    },
+
+    /**
+     * Show error message
+     * @param {string} message - Error message
+     * @param {number} [duration=5000] - Duration in ms to show error
+     */
+    showError(message, duration = 5000) {
+        const errorEl = this.createFromHTML(`
+            <div class="error-message">
+                <div class="error-content">
+                    <p>${message}</p>
+                    <button class="close-btn">&times;</button>
+                </div>
+            </div>
+        `);
+
+        // Add to DOM
+        document.body.appendChild(errorEl);
+
+        // Setup close button
+        const closeBtn = errorEl.querySelector('.close-btn');
+        closeBtn.addEventListener('click', () => errorEl.remove());
+
+        // Auto remove after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                if (errorEl.isConnected) {
+                    errorEl.remove();
+                }
+            }, duration);
+        }
     }
 };

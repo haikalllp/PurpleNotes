@@ -17,6 +17,7 @@ export class NoteList {
         this.notes = [];
         this.noteCards = new Map(); // Map of note ID to NoteCard instance
         this.reminderCheckInterval = null;
+        this.clearButtonListener = null;
         this.initialize();
     }
 
@@ -24,9 +25,27 @@ export class NoteList {
      * Initialize note list
      */
     initialize() {
-        this.loadNotes();
-        this.setupReminderCheck();
-        this.setupClearAllButton();
+        // Show loading state
+        this.showLoadingState();
+        
+        // Load notes with a small delay to show loading state
+        setTimeout(() => {
+            this.loadNotes();
+            this.setupReminderCheck();
+            this.setupClearAllButton();
+        }, 100);
+    }
+
+    /**
+     * Show loading state
+     */
+    showLoadingState() {
+        this.container.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <span>Loading notes...</span>
+            </div>
+        `;
     }
 
     /**
@@ -41,7 +60,18 @@ export class NoteList {
      * Display all notes
      */
     displayNotes() {
+        // Clear the container first
         this.container.innerHTML = '';
+
+        // If no notes, show empty state
+        if (this.notes.length === 0) {
+            this.container.innerHTML = `
+                <div class="empty-state">
+                    <p>No notes yet. Create your first note!</p>
+                </div>
+            `;
+            return;
+        }
         
         // Sort notes: pinned first, then by creation date
         const sortedNotes = Note.sort(this.notes);
@@ -68,6 +98,7 @@ export class NoteList {
      */
     addNote(note) {
         this.notes.push(note);
+        Note.save(this.notes);
         this.displayNotes();
     }
 
@@ -78,7 +109,8 @@ export class NoteList {
     handleNoteDelete(note) {
         this.notes = this.notes.filter(n => n.id !== note.id);
         this.noteCards.delete(note.id);
-        Note.save(this.notes); // Fix: Add save call
+        Note.save(this.notes);
+        this.displayNotes(); // Refresh display
     }
 
     /**
@@ -86,7 +118,7 @@ export class NoteList {
      * @param {Note} note - Note being pinned/unpinned
      */
     handleNotePin(note) {
-        Note.save(this.notes); // Fix: Add save call
+        Note.save(this.notes);
         this.displayNotes(); // Refresh to maintain sort order
     }
 
@@ -115,22 +147,17 @@ export class NoteList {
     }
 
     /**
-     * Clean up resources
-     */
-    destroy() {
-        if (this.reminderCheckInterval) {
-            clearInterval(this.reminderCheckInterval);
-        }
-        this.noteCards.clear();
-    }
-
-    /**
      * Set up clear all button functionality
      */
     setupClearAllButton() {
         const clearButton = document.querySelector('.notes-section .clear-btn');
         if (clearButton) {
-            clearButton.addEventListener('click', async () => {
+            // Remove existing listener if any
+            if (this.clearButtonListener) {
+                clearButton.removeEventListener('click', this.clearButtonListener);
+            }
+
+            this.clearButtonListener = async () => {
                 try {
                     const result = await DOMUtils.showConfirmation({
                         message: 'Are you sure you want to delete all notes?',
@@ -139,20 +166,37 @@ export class NoteList {
 
                     if (result) {
                         await AudioService.playEffect('clearAll');
-                        this.notes = [];
-                        Note.save(this.notes);
-                        this.displayNotes();
+                        await this.clearAll();
                     } else {
                         AudioService.stopEffect('clearAll');
                     }
                 } catch (error) {
-                    console.error('Error clearing notes:', error);
-                    // Continue with clearing even if sound fails
-                    this.notes = [];
-                    Note.save(this.notes);
-                    this.displayNotes();
+                    console.error('Error during clear all:', error);
+                    // Proceed with clearing even if sound fails
+                    await this.clearAll();
                 }
-            });
+            };
+
+            clearButton.addEventListener('click', this.clearButtonListener);
+        }
+    }
+
+    /**
+     * Clean up resources
+     */
+    destroy() {
+        if (this.reminderCheckInterval) {
+            clearInterval(this.reminderCheckInterval);
+        }
+
+        // Clean up note cards
+        this.noteCards.forEach(noteCard => noteCard.destroy?.());
+        this.noteCards.clear();
+
+        // Remove clear button listener
+        const clearButton = document.querySelector('.notes-section .clear-btn');
+        if (clearButton && this.clearButtonListener) {
+            clearButton.removeEventListener('click', this.clearButtonListener);
         }
     }
 

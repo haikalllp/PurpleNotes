@@ -24,8 +24,26 @@ export class TaskList {
      * Initialize task list
      */
     initialize() {
-        this.loadTasks();
-        this.setupClearAllButton();
+        // Show loading state
+        this.showLoadingState();
+        
+        // Load tasks with a small delay to show loading state
+        setTimeout(() => {
+            this.loadTasks();
+            this.setupClearAllButton();
+        }, 100);
+    }
+
+    /**
+     * Show loading state
+     */
+    showLoadingState() {
+        this.container.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <span>Loading tasks...</span>
+            </div>
+        `;
     }
 
     /**
@@ -40,7 +58,18 @@ export class TaskList {
      * Display all tasks
      */
     displayTasks() {
+        // Clear the container first
         this.container.innerHTML = '';
+
+        // If no tasks, show empty state
+        if (this.tasks.length === 0) {
+            this.container.innerHTML = `
+                <div class="empty-state">
+                    <p>No tasks yet. Add your first task!</p>
+                </div>
+            `;
+            return;
+        }
         
         // Clear old task item references and cleanup
         this.taskItems.forEach(taskItem => taskItem.destroy?.());
@@ -79,6 +108,7 @@ export class TaskList {
         this.tasks = this.tasks.filter(t => t.id !== task.id);
         this.taskItems.delete(task.id);
         Task.save(this.tasks);
+        this.displayTasks(); // Refresh display
     }
 
     /**

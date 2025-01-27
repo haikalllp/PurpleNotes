@@ -4,6 +4,29 @@
 import { STORAGE_KEYS } from '../config.js';
 
 class StorageService {
+    constructor() {
+        // Initialize storage
+        this.initialize();
+    }
+
+    /**
+     * Initialize storage checks
+     */
+    initialize() {
+        // Ensure storage is available
+        if (!this.isAvailable()) {
+            throw new Error('LocalStorage is not available');
+        }
+
+        // Initialize with empty arrays if not exists
+        if (!this.loadNotes()) {
+            this.saveNotes([]);
+        }
+        if (!this.loadTasks()) {
+            this.saveTasks([]);
+        }
+    }
+
     /**
      * Save data to localStorage
      * @param {string} key - Storage key
@@ -12,7 +35,8 @@ class StorageService {
      */
     save(key, data) {
         try {
-            localStorage.setItem(key, JSON.stringify(data));
+            const serialized = JSON.stringify(data);
+            localStorage.setItem(key, serialized);
         } catch (error) {
             console.error(`Error saving ${key}:`, error);
             throw new Error(`Failed to save ${key} to storage`);
@@ -40,6 +64,9 @@ class StorageService {
      * @param {Array} notes - Array of note objects
      */
     saveNotes(notes) {
+        if (!Array.isArray(notes)) {
+            throw new Error('Notes must be an array');
+        }
         this.save(STORAGE_KEYS.notes, notes);
     }
 
@@ -48,7 +75,8 @@ class StorageService {
      * @returns {Array} Array of note objects
      */
     loadNotes() {
-        return this.load(STORAGE_KEYS.notes, []);
+        const notes = this.load(STORAGE_KEYS.notes, []);
+        return Array.isArray(notes) ? notes : [];
     }
 
     /**
@@ -56,6 +84,9 @@ class StorageService {
      * @param {Array} tasks - Array of task objects
      */
     saveTasks(tasks) {
+        if (!Array.isArray(tasks)) {
+            throw new Error('Tasks must be an array');
+        }
         this.save(STORAGE_KEYS.tasks, tasks);
     }
 
@@ -64,7 +95,8 @@ class StorageService {
      * @returns {Array} Array of task objects
      */
     loadTasks() {
-        return this.load(STORAGE_KEYS.tasks, []);
+        const tasks = this.load(STORAGE_KEYS.tasks, []);
+        return Array.isArray(tasks) ? tasks : [];
     }
 
     /**
@@ -72,6 +104,9 @@ class StorageService {
      * @param {string} theme - Theme name
      */
     saveTheme(theme) {
+        if (typeof theme !== 'string') {
+            throw new Error('Theme must be a string');
+        }
         this.save(STORAGE_KEYS.theme, theme);
     }
 
@@ -89,7 +124,13 @@ class StorageService {
      */
     clearAll() {
         try {
-            localStorage.clear();
+            // Only clear our app's keys
+            Object.values(STORAGE_KEYS).forEach(key => {
+                localStorage.removeItem(key);
+            });
+
+            // Reinitialize storage
+            this.initialize();
         } catch (error) {
             console.error('Error clearing storage:', error);
             throw new Error('Failed to clear storage');
@@ -102,13 +143,45 @@ class StorageService {
      */
     isAvailable() {
         try {
-            const test = '__storage_test__';
-            localStorage.setItem(test, test);
-            localStorage.removeItem(test);
+            const testKey = '__storage_test__';
+            localStorage.setItem(testKey, testKey);
+            localStorage.removeItem(testKey);
             return true;
         } catch (error) {
             return false;
         }
+    }
+
+    /**
+     * Get storage usage information
+     * @returns {Object} Storage usage stats
+     */
+    getStorageInfo() {
+        const notes = this.loadNotes();
+        const tasks = this.loadTasks();
+
+        return {
+            notesCount: notes.length,
+            tasksCount: tasks.length,
+            storageUsed: this.calculateStorageSize(),
+            maxStorage: 5 * 1024 * 1024 // 5MB localStorage limit
+        };
+    }
+
+    /**
+     * Calculate current storage size
+     * @private
+     * @returns {number} Size in bytes
+     */
+    calculateStorageSize() {
+        let total = 0;
+        Object.values(STORAGE_KEYS).forEach(key => {
+            const item = localStorage.getItem(key);
+            if (item) {
+                total += (key.length + item.length) * 2; // UTF-16 uses 2 bytes per character
+            }
+        });
+        return total;
     }
 }
 
