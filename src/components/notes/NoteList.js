@@ -16,6 +16,7 @@ export class NoteList {
         this.container = DOMUtils.getElement(containerId);
         this.notes = [];
         this.noteCards = new Map(); // Map of note ID to NoteCard instance
+        this.reminderCheckInterval = null;
         this.initialize();
     }
 
@@ -77,6 +78,7 @@ export class NoteList {
     handleNoteDelete(note) {
         this.notes = this.notes.filter(n => n.id !== note.id);
         this.noteCards.delete(note.id);
+        Note.save(this.notes); // Fix: Add save call
     }
 
     /**
@@ -84,6 +86,7 @@ export class NoteList {
      * @param {Note} note - Note being pinned/unpinned
      */
     handleNotePin(note) {
+        Note.save(this.notes); // Fix: Add save call
         this.displayNotes(); // Refresh to maintain sort order
     }
 
@@ -91,7 +94,12 @@ export class NoteList {
      * Set up periodic reminder checks
      */
     setupReminderCheck() {
-        setInterval(() => {
+        // Clear any existing interval
+        if (this.reminderCheckInterval) {
+            clearInterval(this.reminderCheckInterval);
+        }
+
+        this.reminderCheckInterval = setInterval(() => {
             this.notes.forEach(note => {
                 if (NotificationService.shouldNotify(note)) {
                     NotificationService.showNotification(note);
@@ -107,24 +115,42 @@ export class NoteList {
     }
 
     /**
+     * Clean up resources
+     */
+    destroy() {
+        if (this.reminderCheckInterval) {
+            clearInterval(this.reminderCheckInterval);
+        }
+        this.noteCards.clear();
+    }
+
+    /**
      * Set up clear all button functionality
      */
     setupClearAllButton() {
         const clearButton = document.querySelector('.notes-section .clear-btn');
         if (clearButton) {
             clearButton.addEventListener('click', async () => {
-                const result = await DOMUtils.showConfirmation({
-                    message: 'Are you sure you want to delete all notes?',
-                    subtext: 'Pinned notes will be unpinned and deleted as well.'
-                });
+                try {
+                    const result = await DOMUtils.showConfirmation({
+                        message: 'Are you sure you want to delete all notes?',
+                        subtext: 'Pinned notes will be unpinned and deleted as well.'
+                    });
 
-                if (result) {
-                    await AudioService.playEffect('clearAll');
+                    if (result) {
+                        await AudioService.playEffect('clearAll');
+                        this.notes = [];
+                        Note.save(this.notes);
+                        this.displayNotes();
+                    } else {
+                        AudioService.stopEffect('clearAll');
+                    }
+                } catch (error) {
+                    console.error('Error clearing notes:', error);
+                    // Continue with clearing even if sound fails
                     this.notes = [];
                     Note.save(this.notes);
                     this.displayNotes();
-                } else {
-                    AudioService.stopEffect('clearAll');
                 }
             });
         }
@@ -159,7 +185,11 @@ export class NoteList {
      * Clear all notes
      */
     async clearAll() {
-        await AudioService.playEffect('clearAll');
+        try {
+            await AudioService.playEffect('clearAll');
+        } catch (error) {
+            console.error('Error playing clear sound:', error);
+        }
         this.notes = [];
         Note.save(this.notes);
         this.displayNotes();

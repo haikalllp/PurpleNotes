@@ -16,6 +16,7 @@ export class TaskList {
         this.tasks = [];
         this.taskItems = new Map(); // Map of task ID to TaskItem instance
         this.dragStartIndex = null;
+        this.clearButtonListener = null;
         this.initialize();
     }
 
@@ -41,7 +42,8 @@ export class TaskList {
     displayTasks() {
         this.container.innerHTML = '';
         
-        // Clear old task item references
+        // Clear old task item references and cleanup
+        this.taskItems.forEach(taskItem => taskItem.destroy?.());
         this.taskItems.clear();
         
         // Create and display task items
@@ -65,6 +67,7 @@ export class TaskList {
      */
     addTask(task) {
         this.tasks.push(task);
+        Task.save(this.tasks);
         this.displayTasks();
     }
 
@@ -94,8 +97,15 @@ export class TaskList {
      * @param {number} toIndex - Target index
      */
     handleTaskDrop(fromIndex, toIndex) {
-        Task.reorder(fromIndex, toIndex);
-        this.loadTasks(); // Reload to get updated order
+        if (fromIndex === toIndex) return;
+        
+        // Update task order
+        const [taskToMove] = this.tasks.splice(fromIndex, 1);
+        this.tasks.splice(toIndex, 0, taskToMove);
+        
+        // Save and refresh
+        Task.save(this.tasks);
+        this.displayTasks();
     }
 
     /**
@@ -104,18 +114,46 @@ export class TaskList {
     setupClearAllButton() {
         const clearButton = document.querySelector('.tasks-section .clear-btn');
         if (clearButton) {
-            clearButton.addEventListener('click', async () => {
-                const result = await DOMUtils.showConfirmation({
-                    message: 'Are you sure you want to delete all tasks?'
-                });
+            // Remove existing listener if any
+            if (this.clearButtonListener) {
+                clearButton.removeEventListener('click', this.clearButtonListener);
+            }
 
-                if (result) {
-                    await Task.clearAll();
-                    this.loadTasks();
-                } else {
-                    AudioService.stopEffect('clearAll');
+            this.clearButtonListener = async () => {
+                try {
+                    const result = await DOMUtils.showConfirmation({
+                        message: 'Are you sure you want to delete all tasks?'
+                    });
+
+                    if (result) {
+                        await AudioService.playEffect('clearAll');
+                        await this.clearAll();
+                    } else {
+                        AudioService.stopEffect('clearAll');
+                    }
+                } catch (error) {
+                    console.error('Error during clear all:', error);
+                    // Proceed with clearing even if sound fails
+                    await this.clearAll();
                 }
-            });
+            };
+
+            clearButton.addEventListener('click', this.clearButtonListener);
+        }
+    }
+
+    /**
+     * Clean up resources
+     */
+    destroy() {
+        // Clean up task items
+        this.taskItems.forEach(taskItem => taskItem.destroy?.());
+        this.taskItems.clear();
+
+        // Remove clear button listener
+        const clearButton = document.querySelector('.tasks-section .clear-btn');
+        if (clearButton && this.clearButtonListener) {
+            clearButton.removeEventListener('click', this.clearButtonListener);
         }
     }
 
@@ -148,16 +186,32 @@ export class TaskList {
      * Clear completed tasks
      */
     async clearCompleted() {
-        await Task.clearCompleted();
-        this.loadTasks();
+        try {
+            await AudioService.playEffect('clearAll');
+            this.tasks = this.getIncompleteTasks();
+            Task.save(this.tasks);
+            this.displayTasks();
+        } catch (error) {
+            console.error('Error clearing completed tasks:', error);
+            // Proceed with clearing even if sound fails
+            this.tasks = this.getIncompleteTasks();
+            Task.save(this.tasks);
+            this.displayTasks();
+        }
     }
 
     /**
      * Clear all tasks
      */
     async clearAll() {
-        await Task.clearAll();
-        this.loadTasks();
+        try {
+            await AudioService.playEffect('clearAll');
+        } catch (error) {
+            console.error('Error playing clear sound:', error);
+        }
+        this.tasks = [];
+        Task.save(this.tasks);
+        this.displayTasks();
     }
 
     /**
