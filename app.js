@@ -10,7 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
         taskList: document.getElementById('taskList'),
         enableReminder: document.getElementById('enableReminder'),
         noteReminder: document.getElementById('noteReminder'),
-        themeToggle: document.getElementById('themeToggle')
+        themeToggle: document.getElementById('themeToggle'),
+        tabNavigation: document.querySelector('.tab-navigation'),
+        tabItems: document.querySelectorAll('.tab-item'),
+        tabContents: document.querySelectorAll('.tab-content')
     };
 
     // Audio Resources
@@ -27,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Data Stores
     let notes = JSON.parse(localStorage.getItem('notes')) || [];
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let clipboardEntries = JSON.parse(localStorage.getItem('clipboard')) || [];
     const activeNotifications = new Set();
 
     /**
