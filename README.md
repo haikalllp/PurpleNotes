@@ -70,9 +70,9 @@ python -m SimpleHTTPServer 5500
 ## Browser Support
 
 - Chrome (Latest)
-- Firefox (Latest)
+- Brave (Latest)
 - Edge (Latest)
-- Safari (Latest)
+- OperaGX (Latest)
 
 ## Keyboard Shortcuts
 
