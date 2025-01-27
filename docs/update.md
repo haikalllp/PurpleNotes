@@ -13,6 +13,10 @@
 - ✅ Created auto-start batch file
 - ✅ Updated shortcut to use batch file
 - ✅ Added package.json with scripts
+- ✅ Improved batch file with app mode support
+- ✅ Added automatic server cleanup
+- ✅ Added browser selection for app mode
+- ✅ Improved terminal handling
 
 ### 3. Project Structure
 ```
@@ -40,7 +44,14 @@ purple-notes/
 # Using start.bat
 - Double-click start.bat
 - Auto-installs dependencies
-- Opens browser automatically
+- Choice between app mode and default browser
+- Supports multiple browsers in app mode:
+  * Brave
+  * Chrome
+  * Edge
+  * Opera GX
+  * Custom browser
+- Automatic cleanup when closed
 ```
 
 #### Alternative Methods
@@ -79,6 +90,9 @@ npm run dev
 - ✅ Fixed module loading errors
 - ✅ Automated server startup
 - ✅ Improved error messaging
+- ✅ Added automatic server cleanup
+- ✅ Fixed browser monitoring
+- ✅ Improved process management
 
 ### 7. Development Setup
 
@@ -110,7 +124,8 @@ npm run dev
 # Should:
 # - Install dependencies
 # - Start server
-# - Open browser
+# - Open browser (app mode or default)
+# - Clean up when closed
 ```
 
 2. Test manual setup
