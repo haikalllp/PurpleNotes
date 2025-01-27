@@ -752,3 +752,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+function initClipboard() {
+  let clipboardData = JSON.parse(localStorage.getItem('clipboard')) || [];
+
+  function createClipboardEntry() {
+    const entryName = prompt('Enter entry name:');
+    const entryContent = prompt('Enter entry content:');
+    const newEntry = { name: entryName, content: entryContent };
+    clipboardData.push(newEntry);
+    localStorage.setItem('clipboard', JSON.stringify(clipboardData));
+    displayClipboardEntries();
+  }
+
+  function displayClipboardEntries() {
+    const clipboardList = document.getElementById('clipboard-list');
+    clipboardList.innerHTML = '';
+    clipboardData.forEach((entry, index) => {
+      const entryHTML = `
+        <div>
+          <h2>${entry.name}</h2>
+          <p>${entry.content}</p>
+          <button onclick="editClipboardEntry(${index})">Edit</button>
+          <button onclick="deleteClipboardEntry(${index})">Delete</button>
+          <button onclick="copyClipboardEntry(${index})">Copy</button>
+        </div>
+      `;
+      clipboardList.insertAdjacentHTML('beforeend', entryHTML);
+    });
+  }
+
+  function editClipboardEntry(index) {
+    const entryName = prompt('Enter new entry name:');
+    const entryContent = prompt('Enter new entry content:');
+    clipboardData[index] = { name: entryName, content: entryContent };
+    localStorage.setItem('clipboard', JSON.stringify(clipboardData));
+    displayClipboardEntries();
+  }
+
+  function deleteClipboardEntry(index) {
+    clipboardData.splice(index, 1);
+    localStorage.setItem('clipboard', JSON.stringify(clipboardData));
+    displayClipboardEntries();
+  }
+
+  function copyClipboardEntry(index) {
+    navigator.clipboard.writeText(clipboardData[index].content);
+  }
+
+  displayClipboardEntries();
+}
+
+initClipboard();
