@@ -118,8 +118,18 @@ export class NoteList {
      * @param {Note} note - Note being pinned/unpinned
      */
     handleNotePin(note) {
-        Note.save(this.notes);
-        this.displayNotes(); // Refresh to maintain sort order
+        // Find and update the note in our array
+        const noteIndex = this.notes.findIndex(n => n.id === note.id);
+        if (noteIndex !== -1) {
+            // Create a new Note instance with updated properties
+            const updatedNote = { ...this.notes[noteIndex], pinned: !this.notes[noteIndex].pinned };
+            Object.setPrototypeOf(updatedNote, Note.prototype);
+            this.notes[noteIndex] = updatedNote;
+            
+            // Save and refresh display
+            Note.save(this.notes);
+            this.displayNotes(); // Refresh to maintain sort order
+        }
     }
 
     /**
@@ -135,7 +145,6 @@ export class NoteList {
             this.notes.forEach(note => {
                 if (NotificationService.shouldNotify(note)) {
                     NotificationService.showNotification(note);
-                    note.markNotified();
                 }
             });
             

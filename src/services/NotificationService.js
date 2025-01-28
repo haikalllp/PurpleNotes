@@ -14,6 +14,9 @@ class NotificationService {
      * @returns {Promise<void>}
      */
     async showNotification(note) {
+        // Mark note as notified immediately to prevent duplicate notifications
+        note.markNotified();
+        
         const notification = this.createNotificationElement(note);
         document.body.appendChild(notification);
 
@@ -53,7 +56,7 @@ class NotificationService {
         const notification = document.createElement('div');
         notification.className = 'notification-overlay';
         notification.innerHTML = `
-            <div class="notification-card">
+            <div class="notification-card" data-note-id="${note.id}">
                 <div class="notification-header">
                     <h3 class="notification-title">${note.title}</h3>
                     <div class="notification-time">
@@ -104,7 +107,9 @@ class NotificationService {
      */
     setupDismissHandler(notification) {
         const notificationCard = notification.querySelector('.notification-card');
-        notification.querySelector('.notification-continue').addEventListener('click', () => {
+        const noteId = notificationCard.dataset.noteId;
+
+        const handleDismiss = () => {
             // Clear shaking animation
             clearInterval(notificationCard.dataset.shakeInterval);
             
@@ -114,10 +119,20 @@ class NotificationService {
             // Play dismiss sound
             AudioService.playEffect('reminderDismiss');
             
-            // Remove notification
+            // Remove notification and clear from active set
             notification.remove();
             this.activeNotifications.delete(notification);
-        });
+
+            // Find and update the note in storage to ensure persistence
+            const notes = Note.getAll();
+            const note = notes.find(n => n.id === parseInt(noteId));
+            if (note) {
+                note.markNotified();
+                Note.save(notes);
+            }
+        };
+
+        notification.querySelector('.notification-continue').addEventListener('click', handleDismiss);
     }
 
     /**
@@ -138,9 +153,22 @@ class NotificationService {
      * @returns {boolean} True if note should be notified
      */
     shouldNotify(note) {
-        return note.reminder && 
-               note.reminder <= Date.now() && 
-               !note.notified;
+        // If note is already marked as notified, never show notification
+        if (note.notified) {
+            return false;
+        }
+
+        // Check if reminder exists and is due
+        if (!note.reminder || note.reminder > Date.now()) {
+            return false;
+        }
+
+        // Check if a notification is already active for this note
+        const hasActiveNotification = Array.from(this.activeNotifications).some(n =>
+            n.querySelector('.notification-card')?.dataset.noteId === String(note.id)
+        );
+
+        return !hasActiveNotification;
     }
 }
 

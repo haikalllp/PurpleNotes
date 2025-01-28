@@ -26,7 +26,14 @@ export class Note {
      * Toggle the pinned state of the note
      */
     togglePin() {
-        this.pinned = !this.pinned;
+        // Create new instance with updated pin state
+        const updatedNote = { ...this, pinned: !this.pinned };
+        Object.setPrototypeOf(updatedNote, Note.prototype);
+        
+        // Update all properties on this instance
+        Object.assign(this, updatedNote);
+        
+        // Save changes
         Note.save();
     }
 
@@ -81,8 +88,19 @@ export class Note {
      */
     static getAll() {
         return StorageService.loadNotes().map(data => {
-            const note = new Note(data);
-            Object.assign(note, data);
+            // Create a minimal note instance first
+            const note = new Note({
+                title: data.title,
+                content: data.content,
+                reminder: data.reminder,
+                pinned: data.pinned
+            });
+            
+            // Explicitly preserve specific properties
+            note.id = data.id;
+            note.created = data.created;
+            note.notified = !!data.notified; // Ensure boolean type
+            
             return note;
         });
     }
@@ -92,7 +110,16 @@ export class Note {
      * @param {Array<Note>} notes - Array of notes to save
      */
     static save(notes = Note.getAll()) {
-        StorageService.saveNotes(notes);
+        // Ensure all notes have proper prototype chain before saving
+        const processedNotes = notes.map(note => {
+            if (!(note instanceof Note)) {
+                const preservedNote = { ...note };
+                Object.setPrototypeOf(preservedNote, Note.prototype);
+                return preservedNote;
+            }
+            return note;
+        });
+        StorageService.saveNotes(processedNotes);
     }
 
     /**
@@ -120,7 +147,16 @@ export class Note {
      * @returns {Array<Note>} Sorted notes
      */
     static sort(notes) {
-        return [...notes].sort((a, b) => {
+        // Create a shallow copy to avoid modifying the original array
+        const sortedNotes = notes.map(note => {
+            // Preserve all properties when creating array copy
+            const preservedNote = { ...note };
+            // Ensure prototype methods are available
+            Object.setPrototypeOf(preservedNote, Note.prototype);
+            return preservedNote;
+        });
+        
+        return sortedNotes.sort((a, b) => {
             if (a.pinned && !b.pinned) return -1;
             if (!a.pinned && b.pinned) return 1;
             return b.created - a.created;
