@@ -104,21 +104,98 @@ export class TaskList {
      * Handle task deletion
      * @param {Task} task - Task being deleted
      */
-    handleTaskDelete(task) {
-        this.tasks = this.tasks.filter(t => t.id !== task.id);
-        this.taskItems.delete(task.id);
-        Task.save(this.tasks);
-        this.displayTasks(); // Refresh display
+    async handleTaskDelete(task) {
+        const taskItem = this.taskItems.get(task.id);
+        if (!taskItem) return;
+
+        const index = this.tasks.findIndex(t => t.id === task.id);
+        if (index === -1) return;
+
+        // Update data state immediately
+        this.tasks.splice(index, 1);
+        await Task.save(this.tasks);
+        await Task.delete(task.id);
+
+        // Set up reorder animations for tasks below the deleted one
+        const tasks = Array.from(this.container.children);
+        tasks.forEach((el, idx) => {
+            if (idx > index) {
+                // Add reorder class for transition
+                el.classList.add('reorder');
+                // Move up
+                el.style.transform = 'translateY(-100%)';
+                
+                // Force reflow
+                el.offsetHeight;
+                
+                // Animate back to position
+                el.style.transform = '';
+
+                // Update index
+                const taskId = parseInt(el.dataset.taskId);
+                const item = this.taskItems.get(taskId);
+                if (item) {
+                    item.updateIndex(idx - 1);
+                }
+            }
+        });
+
+        // Start fade out animation
+        taskItem.element.classList.add('fade-out');
+
+        // Wait for fade out and then clean up
+        await new Promise(resolve => {
+            taskItem.element.addEventListener('animationend', () => {
+                taskItem.element.remove();
+                this.taskItems.delete(task.id);
+                resolve();
+            }, { once: true });
+        });
+
+        // Remove reorder class after animation
+        tasks.forEach(el => el.classList.remove('reorder'));
+
+        // Show empty state if needed
+        if (this.tasks.length === 0) {
+            this.container.innerHTML = `
+                <div class="empty-state">
+                    <p>No tasks yet. Add your first task!</p>
+                </div>
+            `;
+        }
     }
 
     /**
      * Handle task completion
      * @param {Task} task - Task being completed
      */
-    handleTaskComplete(task) {
-        Task.save(this.tasks);
-        // Refresh display to show/hide delete button
-        this.displayTasks();
+    async handleTaskComplete(task) {
+        const taskIndex = this.tasks.findIndex(t => t.id === task.id);
+        if (taskIndex === -1) return;
+
+        // Toggle completion state
+        const completed = !this.tasks[taskIndex].completed;
+        
+        // Update both memory and storage state immediately
+        this.tasks[taskIndex].completed = completed;
+        await Task.save(this.tasks);
+        
+        // Update UI state
+        const taskItem = this.taskItems.get(task.id);
+        if (taskItem) {
+            // Let CSS handle transitions through class changes
+            taskItem.element.classList.toggle('completed', completed);
+            const checkbox = taskItem.element.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+                checkbox.checked = completed;
+            }
+
+            // Toggle visible class for delete button transitions
+            const deleteBtn = taskItem.element.querySelector('.task-delete-btn');
+            if (deleteBtn) {
+                deleteBtn.classList.toggle('visible', completed);
+            }
+        }
     }
 
     /**

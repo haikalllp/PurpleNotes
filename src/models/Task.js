@@ -21,29 +21,24 @@ export class Task {
      * Toggle the completed state of the task
      * @returns {Promise<void>}
      */
-    async toggleComplete() {
+    async toggleComplete(tasks) {
         // Toggle state
         this.completed = !this.completed;
         
-        // Get all tasks and find this task
-        const tasks = Task.getAll();
-        const taskIndex = tasks.findIndex(t => t.id === this.id);
-        
-        if (taskIndex !== -1) {
-            // Update task in array
-            tasks[taskIndex] = this;
-            
-            // Save changes
-            Task.save(tasks);
-            
-            // Play completion sound if completed
-            if (this.completed) {
-                try {
-                    await AudioService.playEffect('taskComplete');
-                } catch (error) {
-                    console.error('Error playing completion sound:', error);
-                }
+        // Play completion sound if completed
+        if (this.completed) {
+            try {
+                await AudioService.playEffect('taskComplete');
+            } catch (error) {
+                console.error('Error playing completion sound:', error);
             }
+        }
+
+        // Update the tasks array and save
+        const taskIndex = tasks.findIndex(t => t.id === this.id);
+        if (taskIndex !== -1) {
+            tasks[taskIndex] = this;
+            Task.save(tasks);
         }
     }
 

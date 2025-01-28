@@ -33,18 +33,21 @@ export class TaskItem {
             <li class="task-item ${this.task.completed ? 'completed' : ''}"
                 data-task-id="${this.task.id}"
                 data-index="${this.index}"
-                draggable="true"
-                style="cursor: pointer;">
-                <div class="task-label" style="cursor: pointer">
+                draggable="true">
+                <div class="task-label">
                     <input type="checkbox" ${this.task.completed ? 'checked' : ''}>
-                    <span class="task-text ${this.task.completed ? 'completed' : ''}">${this.task.text}</span>
+                    <span class="task-text">${this.task.text}</span>
                 </div>
-                ${this.task.completed ?
-                    `<button class="task-delete-btn" aria-label="Delete task">✕</button>`
-                    : ''
-                }
+                <button class="task-delete-btn"
+                    aria-label="Delete task"
+                    style="visibility: ${this.task.completed ? 'visible' : 'hidden'}">
+                    ✕
+                </button>
             </li>
         `);
+
+        // Let CSS handle transitions and animations
+        return taskElement;
 
         return taskElement;
     }
@@ -67,40 +70,17 @@ export class TaskItem {
         const checkbox = this.element.querySelector('input[type="checkbox"]');
         const taskLabel = this.element.querySelector('.task-label');
 
-        const updateTaskState = async (completed) => {
-            this.task.completed = completed;
-            
-            // Update UI
-            this.element.classList.toggle('completed', completed);
-            
-            // Handle delete button
-            let deleteBtn = this.element.querySelector('.task-delete-btn');
-            if (completed) {
-                if (!deleteBtn) {
-                    deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'task-delete-btn';
-                    deleteBtn.setAttribute('aria-label', 'Delete task');
-                    deleteBtn.textContent = '✕';
-                    taskLabel.appendChild(deleteBtn);
-                    this.setupDeleteHandler();
-                }
-            } else if (deleteBtn) {
-                deleteBtn.remove();
-            }
-
-            // Save state
-            await this.task.toggleComplete();
-
-            // Notify parent
+        // Handle checkbox change
+        const handleCompletion = async () => {
             if (this.onComplete) {
-                this.onComplete(this.task);
+                await this.onComplete(this.task);
             }
         };
 
         // Handle checkbox change
         checkbox.addEventListener('change', async (e) => {
             e.stopPropagation();
-            await updateTaskState(e.target.checked);
+            await handleCompletion();
         });
 
         // Handle label click (excluding checkbox and delete button)
@@ -108,10 +88,33 @@ export class TaskItem {
             if (!e.target.closest('input[type="checkbox"]') && !e.target.closest('.task-delete-btn')) {
                 e.preventDefault();
                 e.stopPropagation();
-                await updateTaskState(!checkbox.checked);
                 checkbox.checked = !checkbox.checked;
+                await handleCompletion();
             }
         });
+    }
+
+    /**
+     * Update the completion state UI
+     * @param {boolean} completed - New completion state
+     */
+    updateCompletionState(completed) {
+        this.task.completed = completed;
+
+        // Let CSS handle all transitions by toggling classes
+        this.element.classList.toggle('completed', completed);
+
+        // Update checkbox state
+        const checkbox = this.element.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+            checkbox.checked = completed;
+        }
+
+        // Handle delete button visibility through CSS classes only
+        const deleteBtn = this.element.querySelector('.task-delete-btn');
+        if (deleteBtn) {
+            deleteBtn.classList.toggle('visible', completed);
+        }
     }
 
     /**
@@ -122,11 +125,15 @@ export class TaskItem {
         const deleteBtn = this.element.querySelector('.task-delete-btn');
         if (deleteBtn) {
             deleteBtn.addEventListener('click', async () => {
-                await DOMUtils.fadeOut(this.element);
-                await Task.delete(this.task.id);
-                if (this.onDelete) {
-                    this.onDelete(this.task);
-                }
+                // Add the fade-out animation
+                this.element.classList.add('fade-out');
+                
+                // Wait for animation to complete before triggering deletion
+                this.element.addEventListener('animationend', () => {
+                    if (this.onDelete) {
+                        this.onDelete(this.task);
+                    }
+                }, { once: true });
             });
         }
     }
