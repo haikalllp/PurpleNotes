@@ -129,13 +129,11 @@ export class TaskList {
     handleTaskDrop(fromIndex, toIndex) {
         if (fromIndex === toIndex) return;
         
-        // Update task order
-        const [taskToMove] = this.tasks.splice(fromIndex, 1);
-        this.tasks.splice(toIndex, 0, taskToMove);
+        // Use Task.reorder to handle the reordering
+        Task.reorder(fromIndex, toIndex);
         
-        // Save and refresh
-        Task.save(this.tasks);
-        this.displayTasks();
+        // Reload tasks to ensure we have the latest order
+        this.loadTasks();
     }
 
     /**

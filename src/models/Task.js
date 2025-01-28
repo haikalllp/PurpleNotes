@@ -22,11 +22,29 @@ export class Task {
      * @returns {Promise<void>}
      */
     async toggleComplete() {
+        // Toggle state
         this.completed = !this.completed;
-        if (this.completed) {
-            await AudioService.playEffect('taskComplete');
+        
+        // Get all tasks and find this task
+        const tasks = Task.getAll();
+        const taskIndex = tasks.findIndex(t => t.id === this.id);
+        
+        if (taskIndex !== -1) {
+            // Update task in array
+            tasks[taskIndex] = this;
+            
+            // Save changes
+            Task.save(tasks);
+            
+            // Play completion sound if completed
+            if (this.completed) {
+                try {
+                    await AudioService.playEffect('taskComplete');
+                } catch (error) {
+                    console.error('Error playing completion sound:', error);
+                }
+            }
         }
-        Task.save();
     }
 
     // Static methods for managing tasks collection
@@ -37,8 +55,15 @@ export class Task {
      */
     static getAll() {
         return StorageService.loadTasks().map(data => {
-            const task = new Task(data);
-            Object.assign(task, data);
+            // Create a new task with minimal data
+            const task = new Task({
+                text: data.text,
+                completed: !!data.completed // Ensure boolean type
+            });
+            
+            // Preserve the ID
+            task.id = data.id;
+            
             return task;
         });
     }
@@ -48,7 +73,16 @@ export class Task {
      * @param {Array<Task>} tasks - Array of tasks to save
      */
     static save(tasks = Task.getAll()) {
-        StorageService.saveTasks(tasks);
+        // Ensure all tasks have proper prototype chain and state
+        const processedTasks = tasks.map(task => {
+            const processedTask = new Task({
+                text: task.text,
+                completed: Boolean(task.completed)
+            });
+            processedTask.id = task.id;
+            return processedTask;
+        });
+        StorageService.saveTasks(processedTasks);
     }
 
     /**

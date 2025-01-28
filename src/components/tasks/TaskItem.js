@@ -30,17 +30,19 @@ export class TaskItem {
      */
     createTaskElement() {
         const taskElement = DOMUtils.createFromHTML(`
-            <li class="task-item ${this.task.completed ? 'completed' : ''}" 
+            <li class="task-item ${this.task.completed ? 'completed' : ''}"
                 data-task-id="${this.task.id}"
                 data-index="${this.index}"
-                draggable="true">
-                <label class="task-label">
+                draggable="true"
+                style="cursor: pointer;">
+                <div class="task-label" style="cursor: pointer">
                     <input type="checkbox" ${this.task.completed ? 'checked' : ''}>
-                    <span class="task-text">${this.task.text}</span>
-                </label>
-                ${this.task.completed ? `
-                    <button class="task-delete-btn" aria-label="Delete task">✕</button>
-                ` : ''}
+                    <span class="task-text ${this.task.completed ? 'completed' : ''}">${this.task.text}</span>
+                </div>
+                ${this.task.completed ?
+                    `<button class="task-delete-btn" aria-label="Delete task">✕</button>`
+                    : ''
+                }
             </li>
         `);
 
@@ -63,13 +65,51 @@ export class TaskItem {
      */
     setupCheckboxHandler() {
         const checkbox = this.element.querySelector('input[type="checkbox"]');
-        checkbox.addEventListener('change', async (e) => {
-            this.task.completed = e.target.checked;
-            await this.task.toggleComplete();
-            this.element.classList.toggle('completed', this.task.completed);
+        const taskLabel = this.element.querySelector('.task-label');
+
+        const updateTaskState = async (completed) => {
+            this.task.completed = completed;
             
+            // Update UI
+            this.element.classList.toggle('completed', completed);
+            
+            // Handle delete button
+            let deleteBtn = this.element.querySelector('.task-delete-btn');
+            if (completed) {
+                if (!deleteBtn) {
+                    deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'task-delete-btn';
+                    deleteBtn.setAttribute('aria-label', 'Delete task');
+                    deleteBtn.textContent = '✕';
+                    taskLabel.appendChild(deleteBtn);
+                    this.setupDeleteHandler();
+                }
+            } else if (deleteBtn) {
+                deleteBtn.remove();
+            }
+
+            // Save state
+            await this.task.toggleComplete();
+
+            // Notify parent
             if (this.onComplete) {
                 this.onComplete(this.task);
+            }
+        };
+
+        // Handle checkbox change
+        checkbox.addEventListener('change', async (e) => {
+            e.stopPropagation();
+            await updateTaskState(e.target.checked);
+        });
+
+        // Handle label click (excluding checkbox and delete button)
+        taskLabel.addEventListener('click', async (e) => {
+            if (!e.target.closest('input[type="checkbox"]') && !e.target.closest('.task-delete-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                await updateTaskState(!checkbox.checked);
+                checkbox.checked = !checkbox.checked;
             }
         });
     }
@@ -110,6 +150,7 @@ export class TaskItem {
      * @param {DragEvent} e
      */
     handleDragStart(e) {
+        e.dataTransfer.setData('text/plain', this.index.toString());
         this.element.classList.add('dragging');
         setTimeout(() => this.element.classList.add('ghost'), 0);
     }
@@ -163,10 +204,15 @@ export class TaskItem {
      * Handle drop event
      * @private
      */
-    handleDrop() {
-        if (this.onDrop) {
-            this.onDrop(parseInt(this.element.dataset.index));
+    handleDrop(e) {
+        e.preventDefault();
+        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+        const toIndex = parseInt(this.element.dataset.index);
+        
+        if (!isNaN(fromIndex) && !isNaN(toIndex) && this.onDrop) {
+            this.onDrop(fromIndex);
         }
+        
         this.element.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
     }
 
