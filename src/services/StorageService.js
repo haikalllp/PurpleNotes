@@ -1,5 +1,6 @@
 /**
- * Manages all localStorage operations for the application
+ * Manages all localStorage operations for the application with support for
+ * cross-tab synchronization and atomic operations
  */
 import { STORAGE_KEYS } from '../config.js';
 
@@ -7,10 +8,14 @@ class StorageService {
     constructor() {
         // Initialize storage
         this.initialize();
+        // Set up storage event listener for cross-tab sync
+        this.setupStorageEventListener();
+        // Lock state for atomic operations
+        this.locks = new Map();
     }
 
     /**
-     * Initialize storage checks
+     * Initialize storage checks and setup
      */
     initialize() {
         // Ensure storage is available
@@ -28,23 +33,78 @@ class StorageService {
     }
 
     /**
-     * Save data to localStorage
+     * Set up storage event listener for cross-tab synchronization
+     * @private
+     */
+    setupStorageEventListener() {
+        window.addEventListener('storage', (event) => {
+            // Handle changes from other tabs
+            if (Object.values(STORAGE_KEYS).includes(event.key)) {
+                // Dispatch custom event for component updates
+                const customEvent = new CustomEvent('storage-update', {
+                    detail: {
+                        key: event.key,
+                        newValue: event.newValue ? JSON.parse(event.newValue) : null
+                    }
+                });
+                window.dispatchEvent(customEvent);
+            }
+        });
+    }
+
+    /**
+     * Acquire a lock for atomic operations
+     * @private
+     * @param {string} key - Storage key to lock
+     * @returns {Promise<boolean>} True if lock acquired
+     */
+    async acquireLock(key) {
+        if (this.locks.get(key)) {
+            return false;
+        }
+        this.locks.set(key, true);
+        return true;
+    }
+
+    /**
+     * Release a lock after atomic operation
+     * @private
+     * @param {string} key - Storage key to unlock
+     */
+    releaseLock(key) {
+        this.locks.delete(key);
+    }
+
+    /**
+     * Save data to localStorage with atomic operation support
      * @param {string} key - Storage key
      * @param {*} data - Data to store
      * @throws {Error} If storage operation fails
      */
-    save(key, data) {
+    async save(key, data) {
         try {
+            // Wait for lock
+            while (!(await this.acquireLock(key))) {
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+
             const serialized = JSON.stringify(data);
             localStorage.setItem(key, serialized);
+
+            // Notify other components of the update
+            window.dispatchEvent(new CustomEvent('storage-update', {
+                detail: { key, newValue: data }
+            }));
         } catch (error) {
             console.error(`Error saving ${key}:`, error);
             throw new Error(`Failed to save ${key} to storage`);
+        } finally {
+            this.releaseLock(key);
         }
     }
 
     /**
-     * Load data from localStorage
+     * Load data from localStorage with fallback
      * @param {string} key - Storage key
      * @param {*} defaultValue - Default value if key doesn't exist
      * @returns {*} Parsed data or default value
@@ -63,11 +123,11 @@ class StorageService {
      * Save notes to localStorage
      * @param {Array} notes - Array of note objects
      */
-    saveNotes(notes) {
+    async saveNotes(notes) {
         if (!Array.isArray(notes)) {
             throw new Error('Notes must be an array');
         }
-        this.save(STORAGE_KEYS.notes, notes);
+        await this.save(STORAGE_KEYS.notes, notes);
     }
 
     /**
@@ -80,14 +140,14 @@ class StorageService {
     }
 
     /**
-     * Save tasks to localStorage
+     * Save tasks to localStorage with atomic operation support
      * @param {Array} tasks - Array of task objects
      */
-    saveTasks(tasks) {
+    async saveTasks(tasks) {
         if (!Array.isArray(tasks)) {
             throw new Error('Tasks must be an array');
         }
-        this.save(STORAGE_KEYS.tasks, tasks);
+        await this.save(STORAGE_KEYS.tasks, tasks);
     }
 
     /**
@@ -100,14 +160,31 @@ class StorageService {
     }
 
     /**
+     * Update specific task atomically
+     * @param {number} taskId - Task ID to update
+     * @param {Function} updateFn - Function that receives current task and returns updated task
+     * @returns {Promise<void>}
+     */
+    async updateTask(taskId, updateFn) {
+        const tasks = this.loadTasks();
+        const taskIndex = tasks.findIndex(t => t.id === taskId);
+        
+        if (taskIndex !== -1) {
+            const updatedTask = updateFn(tasks[taskIndex]);
+            tasks[taskIndex] = updatedTask;
+            await this.saveTasks(tasks);
+        }
+    }
+
+    /**
      * Save theme preference
      * @param {string} theme - Theme name
      */
-    saveTheme(theme) {
+    async saveTheme(theme) {
         if (typeof theme !== 'string') {
             throw new Error('Theme must be a string');
         }
-        this.save(STORAGE_KEYS.theme, theme);
+        await this.save(STORAGE_KEYS.theme, theme);
     }
 
     /**
@@ -122,12 +199,23 @@ class StorageService {
     /**
      * Clear all application data from localStorage
      */
-    clearAll() {
+    async clearAll() {
         try {
-            // Only clear our app's keys
-            Object.values(STORAGE_KEYS).forEach(key => {
+            // Wait for all operations to complete
+            const keys = Object.values(STORAGE_KEYS);
+            for (const key of keys) {
+                while (!(await this.acquireLock(key))) {
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+            }
+
+            // Clear our app's keys
+            keys.forEach(key => {
                 localStorage.removeItem(key);
             });
+
+            // Release all locks
+            keys.forEach(key => this.releaseLock(key));
 
             // Reinitialize storage
             this.initialize();
