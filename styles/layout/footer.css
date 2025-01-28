@@ -1,0 +1,74 @@
+/*------------------------------------*\
+  #FOOTER
+\*------------------------------------*/
+
+/**
+ * App Footer
+ * Sticks to bottom with utility actions
+ */
+.app-footer {
+    margin-top: auto;
+    padding: var(--space-4);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+    align-items: center;
+}
+
+/**
+ * Clear Cache Button
+ */
+.clear-cache-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+
+.clear-cache-btn:hover {
+    color: var(--error);
+    border-color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/**
+ * Loading States
+ */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-8);
+    color: var(--text-secondary);
+}
+
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/**
+ * Responsive Footer
+ */
+@media (max-width: 768px) {
+    .app-footer {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+}

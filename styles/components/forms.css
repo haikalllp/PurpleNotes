@@ -1,0 +1,186 @@
+/*------------------------------------*\
+  #FORMS
+\*------------------------------------*/
+
+/**
+ * Form Container
+ */
+.note-form, .task-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-group {
+    margin-bottom: var(--space-4);
+}
+
+/**
+ * Form Inputs
+ */
+input, textarea {
+    width: 100%;
+    padding: var(--space-4);
+    font-size: 1rem;
+    font-family: inherit;
+    min-height: 45px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+textarea {
+    min-height: 180px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+/**
+ * Form Actions
+ */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-6);
+    gap: var(--space-4);
+}
+
+/**
+ * Primary Button
+ */
+.primary-btn {
+    background: var(--primary);
+    color: var(--text-on-primary);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-6);
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    background: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/**
+ * Clear Button
+ */
+.clear-btn {
+    background: var(--surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2) var(--space-4);
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.clear-btn:hover {
+    color: var(--error);
+    border-color: var(--error);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+/**
+ * Reminder Toggle
+ */
+.reminder-toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-right: var(--space-4);
+}
+
+.reminder-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.reminder-input {
+    position: absolute;
+    left: 140px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(100% - 150px);
+    height: 36px;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text-primary);
+    display: none;
+    transition: var(--transition);
+}
+
+#enableReminder:checked ~ .reminder-input {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/**
+ * Form Animations
+ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50%) translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+/**
+ * Add Note Button
+ */
+.add-note-btn {
+    white-space: nowrap;
+    padding: var(--space-3) var(--space-6);
+    font-size: 0.95rem;
+    font-weight: 500;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+.add-note-btn:hover {
+    transform: translateY(-2px);
+    background: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}

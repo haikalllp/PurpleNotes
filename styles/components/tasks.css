@@ -1,0 +1,326 @@
+/*------------------------------------*\
+  #TASKS
+\*------------------------------------*/
+
+/**
+ * Task List Container
+ */
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/**
+ * Task Item
+ */
+.task-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.125rem;
+    margin-bottom: 1.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease-out;
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    will-change: transform, opacity, border-color, box-shadow, background-color;
+    transform-origin: center center;
+}
+
+.task-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease-out;
+    pointer-events: none;
+}
+
+.task-item:hover::before {
+    border-color: var(--primary-light);
+}
+
+.task-item:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary-light);
+    background-color: color-mix(in srgb, var(--primary) 1%, var(--surface));
+    box-shadow: var(--shadow-sm);
+}
+
+.task-item:active {
+    cursor: grabbing;
+    transform: translateY(0);
+}
+
+/**
+ * Task Label and Checkbox
+ */
+.task-label {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex: 1;
+    min-height: 20px;
+    cursor: pointer;
+    padding: 1px 0;
+}
+
+.task-checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.task-label input[type="checkbox"] {
+    margin: 0;
+    position: relative;
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    cursor: pointer;
+    transition: border-color 0.1s ease-out,
+                background-color 0.1s ease-out;
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+}
+
+.task-label input[type="checkbox"]:hover {
+    border-color: var(--primary-light);
+}
+
+.task-label input[type="checkbox"]:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.task-label input[type="checkbox"]:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.task-label input[type="checkbox"]:checked:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.task-label input[type="checkbox"]::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: var(--text-on-primary);
+    font-size: 8px;
+    line-height: 1;
+    font-weight: bold;
+    transition: transform 0.1s ease-out;
+}
+
+.task-label input[type="checkbox"]:checked::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/**
+ * Task Text
+ */
+.task-text {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    opacity: 0.9;
+    transition: color 0.2s ease-out,
+                text-decoration-color 0.2s ease-out,
+                opacity 0.2s ease-out;
+    text-decoration: none;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 2px;
+    will-change: color, text-decoration, opacity;
+}
+
+/**
+ * Task Delete Button
+ */
+.task-delete-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    padding: var(--space-2);
+    font-size: 1.2rem;
+    line-height: 1;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s ease-out,
+                transform 0.3s var(--transition-bounce),
+                color 0.3s ease-out,
+                background-color 0.2s ease-out;
+    border-radius: var(--radius);
+    will-change: opacity, transform, color, background-color;
+}
+
+.task-item.completed .task-delete-btn {
+    opacity: 0.6;
+    transform: translateX(0);
+}
+
+.task-item.completed:hover .task-delete-btn {
+    opacity: 1;
+}
+
+.task-delete-btn:hover {
+    color: var(--error);
+    transform: scale(1.1);
+    background-color: color-mix(in srgb, var(--error) 10%, transparent);
+}
+
+.task-delete-btn:active {
+    transform: scale(0.95);
+}
+
+/**
+ * Task States
+ */
+.task-item.completed {
+    background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
+    border-color: var(--primary-light);
+    animation: taskComplete 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    text-decoration-color: var(--primary);
+    color: var(--text-secondary);
+    opacity: 0.75;
+    font-size: 1rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/**
+ * Drag and Drop States
+ */
+.task-item.dragging {
+    cursor: grabbing;
+    opacity: 0.95;
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    z-index: 100;
+    background: var(--surface);
+    border-color: var(--primary-light);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-item.ghost {
+    opacity: 0.3;
+    transform: scale(0.98);
+}
+
+.task-item.drop-target::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 2px dashed var(--primary-light);
+    border-radius: inherit;
+    opacity: 0;
+    animation: targetPulse 1.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.task-item.drop-target-above::after,
+.task-item.drop-target-below::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    height: 2px;
+    background: var(--primary);
+    transform-origin: center;
+    animation: lineScale 0.15s ease-out forwards;
+}
+
+.task-item.drop-target-above::after {
+    top: -2px;
+}
+
+.task-item.drop-target-below::after {
+    bottom: -2px;
+}
+
+/**
+ * Task Form
+ */
+.task-form .form-group {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.task-form input {
+    flex: 1;
+    height: 45px;
+}
+
+.task-form .primary-btn {
+    white-space: nowrap;
+}
+
+/**
+ * Animations
+ */
+@keyframes taskComplete {
+    0% {
+        background-color: var(--surface);
+        transform: scale(1);
+    }
+    30% {
+        background-color: color-mix(in srgb, var(--primary) 10%, var(--surface));
+        transform: scale(1.02);
+    }
+    100% {
+        background-color: color-mix(in srgb, var(--primary) 3%, var(--surface));
+        transform: scale(1);
+    }
+}
+
+@keyframes targetPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes lineScale {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+@keyframes taskFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+@keyframes dropTargetPulse {
+    0% { background-color: var(--surface); }
+    50% { background-color: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    100% { background-color: var(--surface); }
+}
+
+.task-item.fade-out {
+    animation: taskFadeOut 0.125s ease-out forwards;
+    pointer-events: none;
+}
