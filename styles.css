@@ -692,49 +692,111 @@ textarea {
 .task-list {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .task-item {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: var(--space-3) var(--space-4);
-    margin-bottom: var(--space-2);
+    padding: 1.125rem;
+    margin-bottom: 1.125rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), 
-                opacity 0.6s ease-out,
-                box-shadow 0.6s ease-out;
+    transition: all 0.2s ease-out;
     cursor: grab;
     user-select: none;
+    position: relative;
 }
 
+.task-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease-out;
+    pointer-events: none;
+}
+
+.task-item:hover::before {
+    border-color: var(--primary-light);
+}
+
+.task-item:hover {
+    border-color: var(--primary-light);
+    background-color: color-mix(in srgb, var(--primary) 1%, var(--surface));
+}
+
+.task-item:active {
+    cursor: grabbing;
+    background-color: var(--surface);
+}
+
+/* Drag and drop states */
 .task-item.dragging {
-    opacity: 0.7;
-    transform: scale(0.95);
-    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
-    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), 
-                opacity 0.6s ease-out,
-                box-shadow 0.6s ease-out;
+    opacity: 0.9;
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: var(--shadow);
+    z-index: 100;
+    background: var(--surface);
+    border: 1px solid var(--primary-light);
+    cursor: grabbing;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-item.ghost {
+    opacity: 0.3;
+    transform: scale(0.98);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .task-item.drop-target {
+    position: relative;
+}
+
+.task-item.drop-target::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
     border: 2px dashed var(--primary);
-    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
-    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    animation: dropTargetPulse 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.task-item.drop-target-above {
-    border-top: 2px solid var(--primary);
-    margin-top: var(--space-4);
-    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+@keyframes dropTargetPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
 }
 
-.task-item.drop-target-below {
-    border-bottom: 2px solid var(--primary);
-    margin-bottom: var(--space-4);
-    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+.task-item.drop-target-above::after,
+.task-item.drop-target-below::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    transform-origin: center;
+    animation: dropLineScale 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.task-item.drop-target-above::after {
+    top: -1px;
+}
+
+.task-item.drop-target-below::after {
+    bottom: -1px;
+}
+
+@keyframes dropLineScale {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
 }
 
 .task-item.ghost {
@@ -751,25 +813,105 @@ textarea {
 .task-label {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: 0.75rem;
     flex: 1;
+    min-height: 24px;
+    padding: 2px 0;
     cursor: pointer;
 }
 
-/* Checkbox styling */
-.task-label input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin: 0;
+/* Enhanced Checkbox styling */
+.task-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-height: 20px;
+    padding: 2px 0;
     cursor: pointer;
-    accent-color: var(--primary);
+}
+
+.task-label input[type="checkbox"] {
+    margin: 0;
+    position: relative;
+    width: 13px;
+    height: 13px;
+    border-radius: 2px;
+    border: 1.5px solid var(--border);
+    background-color: var(--surface);
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out,
+                background-color 0.15s ease-in-out,
+                box-shadow 0.15s ease-in-out,
+                transform 0.15s ease-in-out;
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    transform: translateY(-0.5px);
+}
+
+.task-label input[type="checkbox"]:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-0.5px) scale(1.05);
+}
+
+.task-label input[type="checkbox"]:active {
+    transform: translateY(-0.5px) scale(0.95);
+}
+
+.task-label input[type="checkbox"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.task-label input[type="checkbox"]:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.task-label input[type="checkbox"]:checked:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.task-label input[type="checkbox"]::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: var(--text-on-primary);
+    font-size: 9px;
+    line-height: 1;
+    font-weight: bold;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.task-label input[type="checkbox"]:checked::after {
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .task-text {
-    font-size: 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    opacity: 0.9;
+    transition: color 0.15s ease-out,
+                text-decoration-color 0.15s ease-out,
+                opacity 0.15s ease-out;
+}
+
+.task-text {
+    font-size: 0.9375rem;
+    line-height: 1.4;
     font-weight: normal;
     color: var(--text-primary);
     opacity: 0.9;
+    transition: color 0.15s ease-out,
+                text-decoration-color 0.15s ease-out,
+                opacity 0.15s ease-out;
 }
 
 .task-delete-btn {
@@ -808,25 +950,50 @@ textarea {
     transform: scale(0.95);
 }
 
-/* Task animations */
+/* Task state transitions */
 @keyframes taskComplete {
     0% {
         background-color: var(--surface);
+        transform: scale(1);
     }
-    50% {
-        background-color: color-mix(in srgb, var(--primary) 15%, var(--surface));
+    30% {
+        background-color: color-mix(in srgb, var(--primary) 10%, var(--surface));
+        transform: scale(1.02);
     }
     100% {
-        background-color: color-mix(in srgb, var(--primary) 5%, var(--surface));
+        background-color: color-mix(in srgb, var(--primary) 3%, var(--surface));
+        transform: scale(1);
     }
 }
 
 .task-item.completed {
-    animation: taskComplete 0.5s var(--transition-bounce);
+    animation: taskComplete 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: color-mix(in srgb, var(--primary) 3%, var(--surface));
+    border-color: var(--primary-light);
 }
 
-.fade-out {
-    animation: taskFadeOut 0.3s var(--transition-bounce) forwards;
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    text-decoration-color: var(--primary);
+    color: var(--text-secondary);
+    opacity: 0.75;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes taskFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(5px);
+    }
+}
+
+.task-item.fade-out {
+    animation: taskFadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
 }
 
 /* Task Form */
@@ -1233,6 +1400,10 @@ textarea {
     border: 1px solid transparent;
     will-change: transform, opacity, border-color, box-shadow, background-color;
     transform-origin: center center;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border-radius: var(--radius);
 }
 
 .task-item:hover {
@@ -1244,6 +1415,56 @@ textarea {
 
 .task-item:active {
     transform: translateY(0);
+}
+
+/* Drag and drop enhancements */
+.task-item.dragging {
+    cursor: grabbing;
+    opacity: 0.9;
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: var(--shadow);
+    z-index: 100;
+    background: var(--surface);
+    border: 1px solid var(--primary-light);
+}
+
+.task-item.ghost {
+    opacity: 0.3;
+}
+
+.task-item.drop-target {
+    position: relative;
+    animation: dropTargetPulse 1s ease-in-out infinite;
+}
+
+@keyframes dropTargetPulse {
+    0% { background-color: var(--surface); }
+    50% { background-color: color-mix(in srgb, var(--primary) 5%, var(--surface)); }
+    100% { background-color: var(--surface); }
+}
+
+.task-item.drop-target-above::before,
+.task-item.drop-target-below::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transition: transform 0.2s ease-out;
+}
+
+.task-item.drop-target-above::before {
+    top: -1px;
+    transform-origin: left;
+    transform: scaleX(1);
+}
+
+.task-item.drop-target-below::after {
+    bottom: -1px;
+    transform-origin: right;
+    transform: scaleX(1);
 }
 
 .task-text {
@@ -1271,49 +1492,125 @@ textarea {
     transition: all 0.2s ease-out;
 }
 
-/* Task state transitions */
-.task-item.fade-out {
-    transform: translateX(5px);
-    opacity: 0;
-    transition: transform 0.2s ease-out,
-                opacity 0.2s ease-out;
-}
-
+/* Task completion and transitions */
 .task-item.completed {
-    animation: taskComplete 0.3s ease-out;
+    background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
+    border-color: var(--primary-light);
 }
 
-@keyframes taskComplete {
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    text-decoration-color: var(--primary);
+    color: var(--text-secondary);
+    opacity: 0.75;
+}
+
+/* Fade out animation */
+.task-item.fade-out {
+    animation: itemFadeOut 0.15s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes itemFadeOut {
     0% {
-        background-color: var(--surface);
-    }
-    50% {
-        background-color: color-mix(in srgb, var(--primary) 10%, var(--surface));
+        opacity: 1;
+        transform: translateX(0);
     }
     100% {
-        background-color: color-mix(in srgb, var(--primary) 3%, var(--surface));
+        opacity: 0;
+        transform: translateX(4px);
     }
+}
+
+/* Drag and drop states */
+.task-item.dragging {
+    cursor: grabbing;
+    opacity: 0.95;
+    transform: scale(1.01);
+    box-shadow: var(--shadow-sm);
+    z-index: 100;
+    background: var(--surface);
+}
+
+.task-item.ghost {
+    opacity: 0.3;
+    transform: scale(0.98);
+}
+
+.task-item.drop-target::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 2px dashed var(--primary-light);
+    border-radius: inherit;
+    opacity: 0;
+    animation: targetPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes targetPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+}
+
+.task-item.drop-target-above::after,
+.task-item.drop-target-below::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    height: 2px;
+    background: var(--primary);
+    transform-origin: center;
+    animation: lineScale 0.15s ease-out forwards;
+}
+
+.task-item.drop-target-above::after {
+    top: -2px;
+}
+
+.task-item.drop-target-below::after {
+    bottom: -2px;
+}
+
+@keyframes lineScale {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
 }
 
 /* Enhanced Checkbox styling */
+.task-label {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex: 1;
+    min-height: 20px;
+    cursor: pointer;
+    padding: 1px 0;
+}
+
 .task-label input[type="checkbox"] {
     margin: 0;
     position: relative;
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    border: 1.5px solid var(--border);
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
     background-color: var(--surface);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: border-color 0.1s ease-out,
+                background-color 0.1s ease-out;
     appearance: none;
     -webkit-appearance: none;
-    vertical-align: -2px;
+    flex-shrink: 0;
 }
 
 .task-label input[type="checkbox"]:hover {
     border-color: var(--primary-light);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.task-label input[type="checkbox"]:focus-visible {
+    outline: none;
+    border-color: var(--primary);
 }
 
 .task-label input[type="checkbox"]:checked {
@@ -1333,9 +1630,10 @@ textarea {
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
     color: var(--text-on-primary);
-    font-size: 11px;
+    font-size: 8px;
     line-height: 1;
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: bold;
+    transition: transform 0.1s ease-out;
 }
 
 .task-label input[type="checkbox"]:checked::after {
