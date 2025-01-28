@@ -1,0 +1,131 @@
+/*------------------------------------*\
+  #UTILITIES-AND-ANIMATIONS
+\*------------------------------------*/
+
+/**
+ * Text Styles
+ */
+.task-text,
+.note-content,
+.reminder-toggle label span,
+input,
+textarea,
+button {
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+}
+
+/**
+ * Common Animations
+ */
+@keyframes shake {
+    0% { transform: translate(-1px, 0) rotate(0.5deg); }
+    25% { transform: translate(1px, 1px) rotate(-0.5deg); }
+    50% { transform: translate(-1px, -1px) rotate(0.5deg); }
+    75% { transform: translate(1px, 0) rotate(-0.5deg); }
+    100% { transform: translate(0, 0) rotate(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dropTargetPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes targetPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+}
+
+/**
+ * Animation Classes
+ */
+.shaking {
+    animation: shake 0.4s linear infinite;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform;
+}
+
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/**
+ * Loading State
+ */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-8);
+    color: var(--text-secondary);
+}
+
+/**
+ * Shared Transitions
+ */
+[data-theme] {
+    transition: background-color 0.4s ease,
+                color 0.3s ease-out;
+}
+
+/**
+ * Responsive Design Base
+ */
+@media (max-width: 768px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+    
+    .section-divider {
+        display: none;
+    }
+    
+    .container {
+        padding: var(--space-4);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .primary-btn,
+    .clear-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
