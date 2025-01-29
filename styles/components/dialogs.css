@@ -1,11 +1,11 @@
 /*------------------------------------*\
-  #DIALOGS
+  #DIALOGS-AND-NOTIFICATIONS
 \*------------------------------------*/
 
 /**
- * Overlay Base
+ * Notification Overlay
  */
-.overlay-base, .notification-overlay, .confirmation-dialog {
+.notification-overlay, .confirmation-dialog {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.75);
@@ -18,28 +18,24 @@
 }
 
 /**
- * Dialog Card Base
+ * Notification Card
  */
-.notification-card, .confirmation-content {
+.notification-card {
     background: var(--surface);
     border-radius: var(--radius-xl);
     width: 90%;
-    max-width: 480px;
-    overflow: hidden;
+    max-width: 450px;
+    padding: 0;
     box-shadow: var(--shadow-lg);
     animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: visible;
     transform-style: preserve-3d;
-    will-change: transform;
 }
 
-/**
- * Notification Styles
- */
 .notification-header {
     padding: var(--space-6);
-    background: var(--background);
     border-bottom: 1px solid var(--border);
-    text-align: center;
+    background: var(--background);
 }
 
 .notification-title {
@@ -52,7 +48,7 @@
 }
 
 .notification-time {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     color: var(--text-secondary);
 }
 
@@ -61,7 +57,6 @@
     margin: var(--space-4);
     background: var(--background);
     border-radius: var(--radius-lg);
-    text-align: center;
 }
 
 .notification-body p {
@@ -76,20 +71,43 @@
     padding: var(--space-6);
     display: flex;
     justify-content: center;
-    gap: var(--space-4);
-    background: var(--background);
     border-top: 1px solid var(--border);
+    background: var(--background);
 }
 
 /**
  * Confirmation Dialog
  */
-.confirmation-content > p {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    padding: var(--space-8);
-    line-height: 1.5;
+.confirmation-content {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    width: 90%;
+    max-width: 420px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     text-align: center;
+}
+
+.confirmation-header {
+    padding: var(--space-8) var(--space-8) var(--space-4);
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+}
+
+.confirmation-header p {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+}
+
+.confirmation-header .subtext {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-top: var(--space-4);
+    line-height: 1.5;
+    display: block;
 }
 
 .confirmation-buttons {
@@ -98,6 +116,7 @@
     justify-content: center;
     gap: var(--space-4);
     background: var(--background);
+    border-top: 1px solid var(--border);
 }
 
 .confirmation-buttons button {
@@ -110,7 +129,7 @@
 }
 
 /**
- * Confirmation Buttons
+ * Dialog Buttons
  */
 .confirm-btn {
     background: var(--error);
@@ -138,54 +157,29 @@
 }
 
 /**
- * Dialog Animations
- */
-@keyframes popIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-@keyframes shake {
-    0% { transform: translate(-1px, 0) rotate(0.5deg); }
-    25% { transform: translate(1px, 1px) rotate(-0.5deg); }
-    50% { transform: translate(-1px, -1px) rotate(0.5deg); }
-    75% { transform: translate(1px, 0) rotate(-0.5deg); }
-    100% { transform: translate(0, 0) rotate(0); }
-}
-
-.shaking {
-    animation: shake 0.4s linear infinite;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-    will-change: transform;
-}
-
-/**
  * Responsive Dialog
  */
 @media (max-width: 768px) {
     .notification-card,
     .confirmation-content {
         width: 95%;
-        margin: var(--space-4);
+        margin: var(--space-3);
+    }
+
+    .confirmation-buttons {
+        flex-direction: column;
+        padding: var(--space-4);
+    }
+
+    .confirmation-buttons button {
+        width: 100%;
     }
 
     .notification-title {
         font-size: 1.25rem;
     }
 
-    .confirmation-buttons {
-        flex-direction: column;
-    }
-
-    .confirmation-buttons button {
-        width: 100%;
+    .confirmation-header p {
+        font-size: 1.1rem;
     }
 }
