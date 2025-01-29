@@ -21,7 +21,7 @@
 /**
  * Form Inputs
  */
-input, textarea {
+input:not([type="checkbox"]), textarea {
     width: 100%;
     padding: var(--space-4);
     font-size: 1rem;
@@ -34,7 +34,7 @@ input, textarea {
     transition: var(--transition);
 }
 
-input:focus, textarea:focus {
+input:not([type="checkbox"]):focus, textarea:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
@@ -44,6 +44,67 @@ textarea {
     min-height: 180px;
     line-height: 1.6;
     resize: vertical;
+}
+
+/**
+ * Checkbox Styling
+ */
+input[type="checkbox"] {
+    margin: 0;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1.5px solid var(--border);
+    background-color: var(--surface);
+    cursor: pointer;
+    transition: border-color 180ms ease-out,
+                background-color 180ms ease-out;
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+}
+
+input[type="checkbox"]:hover {
+    border-color: var(--primary-light);
+}
+
+input[type="checkbox"]:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+input[type="checkbox"]::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-on-primary);
+    font-size: 9px;
+    line-height: 1;
+    font-weight: bold;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 180ms ease-out,
+                transform 180ms ease-out;
+}
+
+input[type="checkbox"]:checked::after {
+    opacity: 1;
+    transform: scale(1);
 }
 
 /**

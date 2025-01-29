@@ -20,6 +20,7 @@ export class TaskItem {
         this.onComplete = onComplete;
         this.onDrop = onDrop;
         this.isTransitioning = false;
+        this.isDragging = false;
         this.element = this.createTaskElement();
         this.initialize();
     }
@@ -43,7 +44,7 @@ export class TaskItem {
                            aria-label="Toggle task completion"
                            role="checkbox"
                            aria-checked="${this.task.completed}">
-                    <span class="task-text ${this.task.completed ? 'completed' : ''}">${this.task.text}</span>
+                    <span class="task-text">${this.task.text}</span>
                 </div>
                 ${this.task.completed ?
                     `<button class="task-delete-btn" 
@@ -77,72 +78,64 @@ export class TaskItem {
         const taskLabel = this.element.querySelector('.task-label');
 
         const updateTaskState = async (completed) => {
-            if (this.isTransitioning) return;
+            if (this.isTransitioning || this.isDragging) return;
             this.isTransitioning = true;
 
             try {
-                // Update UI immediately for responsiveness
                 checkbox.checked = completed;
                 this.element.classList.toggle('completed', completed);
                 this.element.setAttribute('aria-label', 
                     `${completed ? 'Completed' : 'Incomplete'} task: ${this.task.text}`);
                 checkbox.setAttribute('aria-checked', completed);
 
-                // Handle delete button
+                // Handle delete button with improved transitions
                 let deleteBtn = this.element.querySelector('.task-delete-btn');
-                if (completed) {
-                    if (!deleteBtn) {
-                        deleteBtn = document.createElement('button');
-                        deleteBtn.className = 'task-delete-btn';
-                        deleteBtn.setAttribute('aria-label', 'Delete task');
-                        deleteBtn.setAttribute('role', 'button');
-                        deleteBtn.textContent = '✕';
-                        deleteBtn.style.opacity = '0';
-                        this.element.appendChild(deleteBtn);
-                        
-                        // Trigger animation after a frame
-                        requestAnimationFrame(() => {
-                            deleteBtn.style.opacity = '1';
-                            this.setupDeleteHandler();
-                        });
-                    }
-                } else if (deleteBtn) {
+                if (completed && !deleteBtn) {
+                    deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'task-delete-btn';
+                    deleteBtn.setAttribute('aria-label', 'Delete task');
+                    deleteBtn.setAttribute('role', 'button');
+                    deleteBtn.textContent = '✕';
+                    this.element.appendChild(deleteBtn);
+                    
+                    // Force reflow before adding transition class
+                    deleteBtn.offsetHeight;
+                    requestAnimationFrame(() => {
+                        this.setupDeleteHandler();
+                    });
+                } else if (!completed && deleteBtn) {
                     deleteBtn.style.opacity = '0';
                     await new Promise(resolve => {
-                        setTimeout(() => {
+                        deleteBtn.addEventListener('transitionend', () => {
                             deleteBtn.remove();
                             resolve();
-                        }, 300); // Match transition duration
+                        }, { once: true });
                     });
                 }
 
-                // Update model state
                 await this.task.toggleComplete();
 
-                // Notify parent after successful state update
                 if (this.onComplete) {
                     this.onComplete(this.task);
                 }
             } catch (error) {
                 console.error('Error updating task state:', error);
-                // Revert UI state on error
                 checkbox.checked = !completed;
                 this.element.classList.toggle('completed', !completed);
-                if (this.element.querySelector('.task-delete-btn')) {
-                    this.element.querySelector('.task-delete-btn').remove();
+                const errorBtn = this.element.querySelector('.task-delete-btn');
+                if (errorBtn) {
+                    errorBtn.remove();
                 }
             } finally {
                 this.isTransitioning = false;
             }
         };
 
-        // Handle checkbox change
         checkbox.addEventListener('change', (e) => {
             e.stopPropagation();
             updateTaskState(e.target.checked);
         });
 
-        // Handle label click (excluding checkbox and delete button)
         taskLabel.addEventListener('click', (e) => {
             if (!e.target.closest('input[type="checkbox"]') && 
                 !e.target.closest('.task-delete-btn')) {
@@ -159,33 +152,33 @@ export class TaskItem {
      */
     setupDeleteHandler() {
         const deleteBtn = this.element.querySelector('.task-delete-btn');
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                if (this.isTransitioning) return;
-                this.isTransitioning = true;
+        if (!deleteBtn) return;
 
-                try {
-                    this.element.classList.add('fade-out');
-                    
-                    // Wait for animation
-                    await new Promise(resolve => {
-                        this.element.addEventListener('animationend', resolve, { once: true });
-                    });
+        const handleDelete = async (e) => {
+            e.stopPropagation();
+            if (this.isTransitioning || this.isDragging) return;
+            this.isTransitioning = true;
 
-                    await Task.delete(this.task.id);
-                    
-                    if (this.onDelete) {
-                        this.onDelete(this.task);
-                    }
-                } catch (error) {
-                    console.error('Error deleting task:', error);
-                    this.element.classList.remove('fade-out');
-                } finally {
-                    this.isTransitioning = false;
+            try {
+                this.element.classList.add('fade-out');
+                await new Promise(resolve => {
+                    this.element.addEventListener('animationend', resolve, { once: true });
+                });
+
+                await Task.delete(this.task.id);
+                
+                if (this.onDelete) {
+                    this.onDelete(this.task);
                 }
-            });
-        }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                this.element.classList.remove('fade-out');
+            } finally {
+                this.isTransitioning = false;
+            }
+        };
+
+        deleteBtn.addEventListener('click', handleDelete);
     }
 
     /**
@@ -198,14 +191,14 @@ export class TaskItem {
             if (key === 'tasks') {
                 const updatedTask = newValue.find(t => t.id === this.task.id);
                 if (updatedTask && updatedTask.lastModified > this.task.lastModified) {
-                    // Update local state
                     this.task = new Task(updatedTask);
                     
-                    // Update UI
-                    const checkbox = this.element.querySelector('input[type="checkbox"]');
-                    if (checkbox) {
-                        checkbox.checked = this.task.completed;
-                        this.element.classList.toggle('completed', this.task.completed);
+                    if (!this.isTransitioning && !this.isDragging) {
+                        const checkbox = this.element.querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            checkbox.checked = this.task.completed;
+                            this.element.classList.toggle('completed', this.task.completed);
+                        }
                     }
                 }
             }
@@ -237,9 +230,23 @@ export class TaskItem {
             e.preventDefault();
             return;
         }
+
+        this.isDragging = true;
+        e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', this.index.toString());
-        this.element.classList.add('dragging');
-        requestAnimationFrame(() => this.element.classList.add('ghost'));
+        
+        // Set drag image
+        const dragImage = this.element.cloneNode(true);
+        dragImage.style.position = 'absolute';
+        dragImage.style.top = '-1000px';
+        document.body.appendChild(dragImage);
+        e.dataTransfer.setDragImage(dragImage, 0, 0);
+        
+        requestAnimationFrame(() => {
+            this.element.classList.add('dragging');
+            this.element.classList.add('ghost');
+            document.body.removeChild(dragImage);
+        });
     }
 
     /**
@@ -247,7 +254,13 @@ export class TaskItem {
      * @private
      */
     handleDragEnd() {
+        this.isDragging = false;
         this.element.classList.remove('dragging', 'ghost');
+        
+        // Clean up any remaining drop targets
+        document.querySelectorAll('.task-item').forEach(item => {
+            item.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
+        });
     }
 
     /**
@@ -256,17 +269,14 @@ export class TaskItem {
      * @param {DragEvent} e
      */
     handleDragOver(e) {
-        if (this.isTransitioning) return;
+        if (this.isTransitioning || !this.isDragging) return;
         e.preventDefault();
-        const dropTarget = this.getDropTarget(e.clientY);
-        
-        if (dropTarget) {
-            const rect = dropTarget.getBoundingClientRect();
-            const offset = e.clientY - rect.top;
-            const middle = rect.height / 2;
-            
-            dropTarget.classList.remove('drop-target-above', 'drop-target-below');
-            dropTarget.classList.add(offset < middle ? 'drop-target-above' : 'drop-target-below');
+        e.dataTransfer.dropEffect = 'move';
+
+        const dropInfo = this.getDropPosition(e.clientY);
+        if (dropInfo) {
+            const { element, position } = dropInfo;
+            this.updateDropTargetStyle(element, position);
         }
     }
 
@@ -276,7 +286,7 @@ export class TaskItem {
      * @param {DragEvent} e
      */
     handleDragEnter(e) {
-        if (this.isTransitioning) return;
+        if (this.isTransitioning || !this.isDragging) return;
         e.preventDefault();
         this.element.classList.add('drop-target');
     }
@@ -297,10 +307,11 @@ export class TaskItem {
     handleDrop(e) {
         if (this.isTransitioning) return;
         e.preventDefault();
+        
         const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
         const toIndex = parseInt(this.element.dataset.index);
         
-        if (!isNaN(fromIndex) && !isNaN(toIndex) && this.onDrop) {
+        if (!isNaN(fromIndex) && !isNaN(toIndex) && this.onDrop && fromIndex !== toIndex) {
             this.onDrop(fromIndex, toIndex);
         }
         
@@ -308,23 +319,48 @@ export class TaskItem {
     }
 
     /**
-     * Get nearest drop target based on Y coordinate
+     * Get drop position information
      * @private
-     * @param {number} y - Y coordinate
-     * @returns {HTMLElement|null}
+     * @param {number} y - Mouse Y coordinate
+     * @returns {{ element: HTMLElement, position: 'above' | 'below' } | null}
      */
-    getDropTarget(y) {
+    getDropPosition(y) {
         const taskElements = [...document.querySelectorAll('.task-item:not(.dragging)')];
-        return taskElements.reduce((closest, child) => {
+        const closestTask = taskElements.reduce((closest, child) => {
             const box = child.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
             
             if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
+                return { offset, element: child };
             }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
+            return closest;
+        }, { offset: Number.NEGATIVE_INFINITY });
+
+        if (!closestTask.element) return null;
+
+        const box = closestTask.element.getBoundingClientRect();
+        const position = y < box.top + box.height / 2 ? 'above' : 'below';
+
+        return {
+            element: closestTask.element,
+            position
+        };
+    }
+
+    /**
+     * Update drop target visual style
+     * @private
+     * @param {HTMLElement} element - Target element
+     * @param {'above' | 'below'} position - Drop position
+     */
+    updateDropTargetStyle(element, position) {
+        // Clear existing drop target styles
+        document.querySelectorAll('.task-item').forEach(item => {
+            item.classList.remove('drop-target-above', 'drop-target-below');
+        });
+        
+        // Apply new drop target style
+        element.classList.add(`drop-target-${position}`);
     }
 
     /**
