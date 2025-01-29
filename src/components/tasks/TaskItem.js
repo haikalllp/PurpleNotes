@@ -21,6 +21,8 @@ export class TaskItem {
         this.onDrop = onDrop;
         this.isTransitioning = false;
         this.isDragging = false;
+        this.pressTimer = null;
+        this.dragStarted = false;
         this.element = this.createTaskElement();
         this.initialize();
     }
@@ -35,7 +37,7 @@ export class TaskItem {
             <li class="task-item ${this.task.completed ? 'completed' : ''}"
                 data-task-id="${this.task.id}"
                 data-index="${this.index}"
-                draggable="true"
+                draggable="false"
                 role="listitem"
                 aria-label="${this.task.completed ? 'Completed task' : 'Incomplete task'}: ${this.task.text}">
                 <div class="task-content">
