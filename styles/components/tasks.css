@@ -44,6 +44,8 @@
     user-select: none;
     position: relative;
     isolation: isolate;
+    transition: border-color 0.2s ease-out,
+                box-shadow 0.2s ease-out;
 }
 
 /**
@@ -57,13 +59,7 @@
     min-height: 1.5rem;
     cursor: pointer;
     padding: 0.25rem 0;
-    transition: transform 0.2s ease-out,
-                opacity 0.2s ease-out;
-}
-
-.task-content:active {
-    transform: scale(0.99);
-    opacity: 0.9;
+    transition: transform 0.2s ease-out;
 }
 
 /**
@@ -91,7 +87,6 @@
     cursor: pointer;
     transition: opacity 0.2s ease-out,
                 color 0.2s ease-out,
-                transform 0.2s ease-out,
                 background-color 0.2s ease-out;
     border-radius: var(--radius);
 }
@@ -99,10 +94,6 @@
 .task-delete-btn:hover {
     color: var(--error);
     background-color: color-mix(in srgb, var(--error) 5%, transparent);
-}
-
-.task-delete-btn:active {
-    transform: scale(0.95);
 }
 
 /**
@@ -196,15 +187,6 @@
 /**
  * Task Animations
  */
-@keyframes taskComplete {
-    0% {
-        background-color: var(--surface);
-    }
-    100% {
-        background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
-    }
-}
-
 @keyframes targetPulse {
     0%, 100% { opacity: 0; }
     50% { opacity: 0.3; }
