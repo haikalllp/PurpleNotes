@@ -12,22 +12,6 @@
     position: relative;
 }
 
-/* Task entry animation */
-.task-list > li {
-    animation: slideIn 0.25s ease-out forwards;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /**
  * Task Item
  */
@@ -43,9 +27,9 @@
     cursor: pointer;
     user-select: none;
     position: relative;
-    isolation: isolate;
-    transition: border-color 0.2s ease-out,
-                box-shadow 0.2s ease-out;
+    transition: border-color 0.2s ease-out;
+    /* Remove box-shadow transition to prevent layout shifts */
+    will-change: border-color;
 }
 
 /**
@@ -59,7 +43,6 @@
     min-height: 1.5rem;
     cursor: pointer;
     padding: 0.25rem 0;
-    transition: transform 0.2s ease-out;
 }
 
 /**
@@ -102,8 +85,6 @@
 .task-item.completed {
     background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
     border-color: color-mix(in srgb, var(--primary) 25%, var(--border));
-    transition: background-color 0.2s ease-out,
-                border-color 0.2s ease-out;
 }
 
 .task-item.completed .task-text {
@@ -126,11 +107,6 @@
  */
 .task-item:hover {
     border-color: var(--primary-light);
-    box-shadow: var(--shadow);
-}
-
-.task-item:hover .task-content {
-    transform: translateY(-2px);
 }
 
 /**
@@ -143,13 +119,11 @@
     border-color: var(--primary-light);
     box-shadow: var(--shadow-sm);
     z-index: 100;
-    transition: none;
 }
 
 .task-item.ghost {
     opacity: 0.4;
     background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
-    transform: scale(0.99);
 }
 
 .task-item.drop-target::before {
@@ -217,13 +191,7 @@
     color: var(--text-secondary);
     font-size: 0.9375rem;
     padding: 2rem;
-    opacity: 0;
-    animation: fadeIn 0.2s ease-out 0.1s forwards;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 0.6; }
+    opacity: 0.6;
 }
 
 /**

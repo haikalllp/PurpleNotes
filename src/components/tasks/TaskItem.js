@@ -82,26 +82,28 @@ export class TaskItem {
             this.isTransitioning = true;
 
             try {
-                // Update UI immediately for responsiveness
-                checkbox.checked = completed;
-                this.element.classList.toggle('completed', completed);
-                this.element.setAttribute('aria-label', 
-                    `${completed ? 'Completed' : 'Incomplete'} task: ${this.task.text}`);
-                checkbox.setAttribute('aria-checked', completed);
+                // Batch UI updates
+                requestAnimationFrame(() => {
+                    checkbox.checked = completed;
+                    this.element.classList.toggle('completed', completed);
+                    this.element.setAttribute('aria-label', 
+                        `${completed ? 'Completed' : 'Incomplete'} task: ${this.task.text}`);
+                    checkbox.setAttribute('aria-checked', completed);
 
-                // Handle delete button
-                let deleteBtn = this.element.querySelector('.task-delete-btn');
-                if (completed && !deleteBtn) {
-                    deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'task-delete-btn';
-                    deleteBtn.setAttribute('aria-label', 'Delete task');
-                    deleteBtn.setAttribute('role', 'button');
-                    deleteBtn.textContent = '✕';
-                    this.element.appendChild(deleteBtn);
-                    this.setupDeleteHandler();
-                } else if (!completed && deleteBtn) {
-                    deleteBtn.remove();
-                }
+                    // Handle delete button
+                    let deleteBtn = this.element.querySelector('.task-delete-btn');
+                    if (completed && !deleteBtn) {
+                        deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'task-delete-btn';
+                        deleteBtn.setAttribute('aria-label', 'Delete task');
+                        deleteBtn.setAttribute('role', 'button');
+                        deleteBtn.textContent = '✕';
+                        this.element.appendChild(deleteBtn);
+                        this.setupDeleteHandler();
+                    } else if (!completed && deleteBtn) {
+                        deleteBtn.remove();
+                    }
+                });
 
                 // Update model state
                 await this.task.toggleComplete();
@@ -111,17 +113,19 @@ export class TaskItem {
                 }
             } catch (error) {
                 console.error('Error updating task state:', error);
-                checkbox.checked = !completed;
-                this.element.classList.toggle('completed', !completed);
-                if (this.element.querySelector('.task-delete-btn')) {
-                    this.element.querySelector('.task-delete-btn').remove();
-                }
+                requestAnimationFrame(() => {
+                    checkbox.checked = !completed;
+                    this.element.classList.toggle('completed', !completed);
+                    if (this.element.querySelector('.task-delete-btn')) {
+                        this.element.querySelector('.task-delete-btn').remove();
+                    }
+                });
             } finally {
                 this.isTransitioning = false;
             }
         };
 
-        // Single click handler for task area
+        // Single click handler for task content
         taskContent.addEventListener('click', (e) => {
             const isCheckbox = e.target.type === 'checkbox';
             if (!isCheckbox) {
@@ -184,11 +188,13 @@ export class TaskItem {
                     this.task = new Task(updatedTask);
                     
                     if (!this.isTransitioning && !this.isDragging) {
-                        const checkbox = this.element.querySelector('input[type="checkbox"]');
-                        if (checkbox) {
-                            checkbox.checked = this.task.completed;
-                            this.element.classList.toggle('completed', this.task.completed);
-                        }
+                        requestAnimationFrame(() => {
+                            const checkbox = this.element.querySelector('input[type="checkbox"]');
+                            if (checkbox) {
+                                checkbox.checked = this.task.completed;
+                                this.element.classList.toggle('completed', this.task.completed);
+                            }
+                        });
                     }
                 }
             }
