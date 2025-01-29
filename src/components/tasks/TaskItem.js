@@ -38,7 +38,7 @@ export class TaskItem {
                 draggable="true"
                 role="listitem"
                 aria-label="${this.task.completed ? 'Completed task' : 'Incomplete task'}: ${this.task.text}">
-                <div class="task-label">
+                <div class="task-content">
                     <input type="checkbox" 
                            ${this.task.completed ? 'checked' : ''} 
                            aria-label="Toggle task completion"
@@ -75,20 +75,21 @@ export class TaskItem {
      */
     setupCheckboxHandler() {
         const checkbox = this.element.querySelector('input[type="checkbox"]');
-        const taskLabel = this.element.querySelector('.task-label');
+        const taskContent = this.element.querySelector('.task-content');
 
         const updateTaskState = async (completed) => {
             if (this.isTransitioning || this.isDragging) return;
             this.isTransitioning = true;
 
             try {
+                // Update UI immediately for responsiveness
                 checkbox.checked = completed;
                 this.element.classList.toggle('completed', completed);
                 this.element.setAttribute('aria-label', 
                     `${completed ? 'Completed' : 'Incomplete'} task: ${this.task.text}`);
                 checkbox.setAttribute('aria-checked', completed);
 
-                // Handle delete button with improved transitions
+                // Handle delete button
                 let deleteBtn = this.element.querySelector('.task-delete-btn');
                 if (completed && !deleteBtn) {
                     deleteBtn = document.createElement('button');
@@ -97,22 +98,12 @@ export class TaskItem {
                     deleteBtn.setAttribute('role', 'button');
                     deleteBtn.textContent = '✕';
                     this.element.appendChild(deleteBtn);
-                    
-                    // Force reflow before adding transition class
-                    deleteBtn.offsetHeight;
-                    requestAnimationFrame(() => {
-                        this.setupDeleteHandler();
-                    });
+                    this.setupDeleteHandler();
                 } else if (!completed && deleteBtn) {
-                    deleteBtn.style.opacity = '0';
-                    await new Promise(resolve => {
-                        deleteBtn.addEventListener('transitionend', () => {
-                            deleteBtn.remove();
-                            resolve();
-                        }, { once: true });
-                    });
+                    deleteBtn.remove();
                 }
 
+                // Update model state
                 await this.task.toggleComplete();
 
                 if (this.onComplete) {
@@ -122,39 +113,40 @@ export class TaskItem {
                 console.error('Error updating task state:', error);
                 checkbox.checked = !completed;
                 this.element.classList.toggle('completed', !completed);
-                const errorBtn = this.element.querySelector('.task-delete-btn');
-                if (errorBtn) {
-                    errorBtn.remove();
+                if (this.element.querySelector('.task-delete-btn')) {
+                    this.element.querySelector('.task-delete-btn').remove();
                 }
             } finally {
                 this.isTransitioning = false;
             }
         };
 
-        checkbox.addEventListener('change', (e) => {
-            e.stopPropagation();
-            updateTaskState(e.target.checked);
-        });
-
-        taskLabel.addEventListener('click', (e) => {
-            if (!e.target.closest('input[type="checkbox"]') && 
-                !e.target.closest('.task-delete-btn')) {
+        // Single click handler for task area
+        taskContent.addEventListener('click', (e) => {
+            const isCheckbox = e.target.type === 'checkbox';
+            if (!isCheckbox) {
                 e.preventDefault();
                 e.stopPropagation();
                 updateTaskState(!checkbox.checked);
             }
         });
+
+        // Handle direct checkbox changes
+        checkbox.addEventListener('change', (e) => {
+            e.stopPropagation();
+            updateTaskState(e.target.checked);
+        });
     }
 
     /**
-     * Set up delete button handler with animation
+     * Set up delete button handler
      * @private
      */
     setupDeleteHandler() {
         const deleteBtn = this.element.querySelector('.task-delete-btn');
         if (!deleteBtn) return;
 
-        const handleDelete = async (e) => {
+        deleteBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
             if (this.isTransitioning || this.isDragging) return;
             this.isTransitioning = true;
@@ -176,9 +168,7 @@ export class TaskItem {
             } finally {
                 this.isTransitioning = false;
             }
-        };
-
-        deleteBtn.addEventListener('click', handleDelete);
+        });
     }
 
     /**
@@ -226,26 +216,17 @@ export class TaskItem {
      * @param {DragEvent} e
      */
     handleDragStart(e) {
-        if (this.isTransitioning) {
+        if (this.isTransitioning || e.target.closest('input, button')) {
             e.preventDefault();
             return;
         }
-
         this.isDragging = true;
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', this.index.toString());
         
-        // Set drag image
-        const dragImage = this.element.cloneNode(true);
-        dragImage.style.position = 'absolute';
-        dragImage.style.top = '-1000px';
-        document.body.appendChild(dragImage);
-        e.dataTransfer.setDragImage(dragImage, 0, 0);
-        
         requestAnimationFrame(() => {
             this.element.classList.add('dragging');
             this.element.classList.add('ghost');
-            document.body.removeChild(dragImage);
         });
     }
 
@@ -257,7 +238,6 @@ export class TaskItem {
         this.isDragging = false;
         this.element.classList.remove('dragging', 'ghost');
         
-        // Clean up any remaining drop targets
         document.querySelectorAll('.task-item').forEach(item => {
             item.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
         });
@@ -354,12 +334,10 @@ export class TaskItem {
      * @param {'above' | 'below'} position - Drop position
      */
     updateDropTargetStyle(element, position) {
-        // Clear existing drop target styles
         document.querySelectorAll('.task-item').forEach(item => {
             item.classList.remove('drop-target-above', 'drop-target-below');
         });
         
-        // Apply new drop target style
         element.classList.add(`drop-target-${position}`);
     }
 

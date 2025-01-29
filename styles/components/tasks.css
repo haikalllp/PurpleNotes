@@ -9,7 +9,23 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    contain: content;  /* Prevent animation leaks */
+    position: relative;
+}
+
+/* Task entry animation */
+.task-list > li {
+    animation: slideIn 0.25s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /**
@@ -24,25 +40,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: background-color 180ms ease-out;
-    cursor: grab;
+    cursor: pointer;
     user-select: none;
     position: relative;
-    contain: layout style;  /* Isolate animations */
-}
-
-.task-item:hover {
-    background-color: color-mix(in srgb, var(--primary) 1%, var(--surface));
-}
-
-.task-item:active {
-    cursor: grabbing;
+    isolation: isolate;
 }
 
 /**
- * Task Label and Checkbox
+ * Task Content
  */
-.task-label {
+.task-content {
     display: flex;
     align-items: center;
     gap: 0.875rem;
@@ -50,6 +57,13 @@
     min-height: 1.5rem;
     cursor: pointer;
     padding: 0.25rem 0;
+    transition: transform 0.2s ease-out,
+                opacity 0.2s ease-out;
+}
+
+.task-content:active {
+    transform: scale(0.99);
+    opacity: 0.9;
 }
 
 /**
@@ -60,8 +74,6 @@
     line-height: 1.4;
     color: var(--text-primary);
     padding: 0.25rem 0;
-    transition: color 180ms ease-out,
-                opacity 180ms ease-out;
 }
 
 /**
@@ -77,15 +89,20 @@
     line-height: 1;
     opacity: 0;
     cursor: pointer;
-    transition: opacity 180ms ease-out,
-                transform 180ms ease-out,
-                background-color 180ms ease-out;
+    transition: opacity 0.2s ease-out,
+                color 0.2s ease-out,
+                transform 0.2s ease-out,
+                background-color 0.2s ease-out;
     border-radius: var(--radius);
 }
 
 .task-delete-btn:hover {
     color: var(--error);
-    background-color: color-mix(in srgb, var(--error) 8%, transparent);
+    background-color: color-mix(in srgb, var(--error) 5%, transparent);
+}
+
+.task-delete-btn:active {
+    transform: scale(0.95);
 }
 
 /**
@@ -93,6 +110,9 @@
  */
 .task-item.completed {
     background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
+    border-color: color-mix(in srgb, var(--primary) 25%, var(--border));
+    transition: background-color 0.2s ease-out,
+                border-color 0.2s ease-out;
 }
 
 .task-item.completed .task-text {
@@ -111,19 +131,34 @@
 }
 
 /**
+ * Task Hover State
+ */
+.task-item:hover {
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow);
+}
+
+.task-item:hover .task-content {
+    transform: translateY(-2px);
+}
+
+/**
  * Drag and Drop States
  */
 .task-item.dragging {
     cursor: grabbing;
-    opacity: 0.9;
+    opacity: 0.95;
     background: var(--surface);
+    border-color: var(--primary-light);
     box-shadow: var(--shadow-sm);
     z-index: 100;
+    transition: none;
 }
 
 .task-item.ghost {
     opacity: 0.4;
-    background-color: color-mix(in srgb, var(--primary) 3%, var(--surface));
+    background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
+    transform: scale(0.99);
 }
 
 .task-item.drop-target::before {
@@ -147,7 +182,7 @@
     background: var(--primary);
     pointer-events: none;
     transform-origin: left;
-    animation: lineScale 180ms ease-out forwards;
+    animation: lineScale 0.15s ease-out forwards;
 }
 
 .task-item.drop-target-above::after {
@@ -161,9 +196,18 @@
 /**
  * Task Animations
  */
+@keyframes taskComplete {
+    0% {
+        background-color: var(--surface);
+    }
+    100% {
+        background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
+    }
+}
+
 @keyframes targetPulse {
     0%, 100% { opacity: 0; }
-    50% { opacity: 0.4; }
+    50% { opacity: 0.3; }
 }
 
 @keyframes lineScale {
@@ -173,7 +217,7 @@
 
 .task-item.fade-out {
     pointer-events: none;
-    animation: taskFadeOut 180ms ease-out forwards;
+    animation: taskFadeOut 0.2s ease-out forwards;
 }
 
 @keyframes taskFadeOut {
@@ -181,6 +225,23 @@
         opacity: 0;
         transform: translateY(-4px);
     }
+}
+
+/* Empty State Animation */
+.task-list:empty::after {
+    content: 'No tasks yet';
+    display: block;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    padding: 2rem;
+    opacity: 0;
+    animation: fadeIn 0.2s ease-out 0.1s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 0.6; }
 }
 
 /**
@@ -209,5 +270,9 @@
     
     .task-form .form-group {
         flex-direction: column;
+    }
+
+    .task-item {
+        padding: 0.875rem 1rem;
     }
 }
