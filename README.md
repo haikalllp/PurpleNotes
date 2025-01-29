@@ -25,6 +25,7 @@ A browser-based notes and tasks application with reminders and theme support.
 - Light and dark theme support
 - Data persistence using localStorage
 - Responsive design for all devices
+- Modular CSS architecture
 
 ## Development Setup
 
@@ -40,17 +41,42 @@ A browser-based notes and tasks application with reminders and theme support.
 
 ### Project Structure
 
+```
 purple-notes/
 ├── src/
 │   ├── components/     # UI components
 │   ├── models/        # Data models
 │   ├── services/      # Application services
 │   └── utils/         # Utility functions
-├── styles.css         # Global styles
+├── styles/
+│   ├── base/          # Base styles and utilities
+│   ├── layout/        # Layout components
+│   ├── components/    # Component styles
+│   └── main.css       # Style entry point
 ├── app.js            # Application entry point
 └── index.html        # Main HTML file
-
 ```
+
+### CSS Architecture
+
+The project uses a modular CSS architecture:
+
+- **Base Styles** (`styles/base/`)
+  - `variables.css` - Theme variables and custom properties
+  - `reset.css` - Base resets and normalizations
+  - `utils.css` - Shared utilities and animations
+
+- **Layout** (`styles/layout/`)
+  - `grid.css` - Grid system and containers
+  - `header.css` - Header component styles
+  - `footer.css` - Footer component styles
+
+- **Components** (`styles/components/`)
+  - `forms.css` - Form elements and controls
+  - `notes.css` - Note cards and interactions
+  - `tasks.css` - Task list and interactions
+  - `dialogs.css` - Notifications and modals
+
 ## Alternative Run Methods
 
 ### Using VS Code Live Server
@@ -74,6 +100,12 @@ python -m SimpleHTTPServer 5500
 - Edge (Latest)
 - OperaGX (Latest)
 
+Requirements:
+- CSS Grid support
+- CSS Custom Properties
+- CSS Flexbox
+- Modern JavaScript (ES6+)
+
 ## Keyboard Shortcuts
 
 - `Ctrl/Cmd + N`: Focus note input
@@ -85,6 +117,8 @@ python -m SimpleHTTPServer 5500
 - The application requires a local server due to ES module restrictions
 - Data is stored in browser's localStorage
 - Clear cache to reset all data
+- CSS is organized in modular files
+- Styles use CSS custom properties for theming
 
 ## Troubleshooting
 
@@ -102,4 +136,13 @@ python -m SimpleHTTPServer 5500
    - Check if another server is running on port 5500
    - Close other instances or use a different port
 
-For more detailed information, see howToRun.html in the project directory.
+4. **Style issues**
+   - Clear browser cache
+   - Ensure CSS files are loading properly
+   - Check browser console for errors
+   - Verify browser compatibility
+
+For more detailed information:
+- See `howToRun.html` for setup instructions
+- See `docs/architecture.md` for technical details
+- See `docs/update.md` for recent changes
