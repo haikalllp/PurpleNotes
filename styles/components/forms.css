@@ -47,9 +47,9 @@ textarea {
 }
 
 /**
- * Checkbox Styling
+ * Base Checkbox Styling
  */
-input[type="checkbox"] {
+.form-group input[type="checkbox"] {
     margin: 0;
     position: relative;
     width: 14px;
@@ -65,27 +65,27 @@ input[type="checkbox"] {
     flex-shrink: 0;
 }
 
-input[type="checkbox"]:hover {
+.form-group input[type="checkbox"]:hover {
     border-color: var(--primary-light);
 }
 
-input[type="checkbox"]:focus-visible {
+.form-group input[type="checkbox"]:focus-visible {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
-input[type="checkbox"]:checked {
+.form-group input[type="checkbox"]:checked {
     background-color: var(--primary);
     border-color: var(--primary);
 }
 
-input[type="checkbox"]:checked:hover {
+.form-group input[type="checkbox"]:checked:hover {
     background-color: var(--primary-dark);
     border-color: var(--primary-dark);
 }
 
-input[type="checkbox"]::after {
+.form-group input[type="checkbox"]::after {
     content: "✓";
     position: absolute;
     inset: 0;
@@ -102,7 +102,7 @@ input[type="checkbox"]::after {
                 transform 180ms ease-out;
 }
 
-input[type="checkbox"]:checked::after {
+.form-group input[type="checkbox"]:checked::after {
     opacity: 1;
     transform: scale(1);
 }
@@ -178,7 +178,7 @@ input[type="checkbox"]:checked::after {
     gap: var(--space-3);
     margin-right: var(--space-4);
     padding: var(--space-2) 0;
-    max-width: 600px; /* Increased from 500px */
+    max-width: 600px;
 }
 
 .reminder-label {
@@ -189,16 +189,16 @@ input[type="checkbox"]:checked::after {
     font-size: 0.95rem;
     color: var(--text-primary);
     white-space: nowrap;
-    min-width: 150px; /* Increased from 110px */
+    min-width: 150px;
 }
 
 .reminder-input {
     position: absolute;
-    left: 135px; /* Increased from 120px to avoid text overlap */
+    left: 135px;
     top: 50%;
     transform: translateY(-50%);
-    width: calc(100% - 145px); /* Adjusted to match new left position */
-    max-width: 380px; /* Increased from 300px */
+    width: calc(100% - 145px);
+    max-width: 380px;
     height: 36px;
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border);

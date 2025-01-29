@@ -82,28 +82,31 @@ export class TaskItem {
             this.isTransitioning = true;
 
             try {
-                // Batch UI updates
-                requestAnimationFrame(() => {
-                    checkbox.checked = completed;
-                    this.element.classList.toggle('completed', completed);
-                    this.element.setAttribute('aria-label', 
-                        `${completed ? 'Completed' : 'Incomplete'} task: ${this.task.text}`);
-                    checkbox.setAttribute('aria-checked', completed);
+                // Update UI
+                checkbox.checked = completed;
+                this.element.classList.toggle('completed', completed);
+                this.element.setAttribute('aria-label',
+                    `${completed ? 'Completed' : 'Incomplete'} task: ${this.task.text}`);
+                checkbox.setAttribute('aria-checked', completed);
 
-                    // Handle delete button
-                    let deleteBtn = this.element.querySelector('.task-delete-btn');
-                    if (completed && !deleteBtn) {
-                        deleteBtn = document.createElement('button');
-                        deleteBtn.className = 'task-delete-btn';
-                        deleteBtn.setAttribute('aria-label', 'Delete task');
-                        deleteBtn.setAttribute('role', 'button');
-                        deleteBtn.textContent = '✕';
-                        this.element.appendChild(deleteBtn);
-                        this.setupDeleteHandler();
-                    } else if (!completed && deleteBtn) {
-                        deleteBtn.remove();
-                    }
-                });
+                // Handle delete button
+                let deleteBtn = this.element.querySelector('.task-delete-btn');
+                if (completed && !deleteBtn) {
+                    deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'task-delete-btn';
+                    deleteBtn.setAttribute('aria-label', 'Delete task');
+                    deleteBtn.setAttribute('role', 'button');
+                    deleteBtn.textContent = '✕';
+                    this.element.appendChild(deleteBtn);
+                    this.setupDeleteHandler();
+                } else if (!completed && deleteBtn) {
+                    deleteBtn.remove();
+                }
+
+                // Handle animation
+                checkbox.style.animation = 'none';
+                checkbox.offsetHeight; // Force reflow
+                checkbox.style.animation = `${completed ? 'checkPulse' : 'uncheckPulse'} 0.2s ease-in-out`;
 
                 // Update model state
                 await this.task.toggleComplete();

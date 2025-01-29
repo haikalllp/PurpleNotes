@@ -28,7 +28,6 @@
     user-select: none;
     position: relative;
     transition: border-color 0.2s ease-out;
-    /* Remove box-shadow transition to prevent layout shifts */
     will-change: border-color;
 }
 
@@ -43,6 +42,63 @@
     min-height: 1.5rem;
     cursor: pointer;
     padding: 0.25rem 0;
+}
+
+/**
+ * Task Checkbox
+ */
+.task-item input[type="checkbox"] {
+    margin: 0;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1.5px solid var(--border);
+    background-color: var(--surface);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    will-change: transform;
+}
+
+/* Checkmark */
+.task-item input[type="checkbox"]::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-on-primary);
+    font-size: 9px;
+    line-height: 1;
+    font-weight: bold;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.task-item input[type="checkbox"]:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.task-item input[type="checkbox"]:checked::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Checkbox Animation */
+@keyframes checkPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes uncheckPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.8); }
+    100% { transform: scale(1); }
 }
 
 /**
@@ -183,7 +239,7 @@
     }
 }
 
-/* Empty State Animation */
+/* Empty State */
 .task-list:empty::after {
     content: 'No tasks yet';
     display: block;
