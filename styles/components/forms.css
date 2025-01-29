@@ -178,7 +178,7 @@ input[type="checkbox"]:checked::after {
     gap: var(--space-3);
     margin-right: var(--space-4);
     padding: var(--space-2) 0;
-    width: 100%;
+    max-width: 600px; /* Increased from 500px */
 }
 
 .reminder-label {
@@ -189,14 +189,16 @@ input[type="checkbox"]:checked::after {
     font-size: 0.95rem;
     color: var(--text-primary);
     white-space: nowrap;
+    min-width: 150px; /* Increased from 110px */
 }
 
 .reminder-input {
     position: absolute;
-    left: 140px;
+    left: 135px; /* Increased from 120px to avoid text overlap */
     top: 50%;
     transform: translateY(-50%);
-    width: calc(100% - 150px);
+    width: calc(100% - 145px); /* Adjusted to match new left position */
+    max-width: 380px; /* Increased from 300px */
     height: 36px;
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border);
@@ -205,6 +207,7 @@ input[type="checkbox"]:checked::after {
     color: var(--text-primary);
     display: none;
     transition: var(--transition);
+    z-index: 1;
 }
 
 .reminder-input:focus {
@@ -246,11 +249,13 @@ input[type="checkbox"]:checked::after {
     
     .reminder-toggle {
         width: 100%;
+        max-width: 100%;
     }
     
     .reminder-input {
-        width: calc(100% - 120px);
-        left: 120px;
+        width: calc(100% - 145px);
+        left: 135px;
+        max-width: none;
     }
     
     .primary-btn,
