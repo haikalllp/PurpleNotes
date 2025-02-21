@@ -2,6 +2,7 @@
  * Manages notifications and reminders for the application
  */
 import AudioService from './AudioService.js';
+import { Note } from '../models/Note.js';
 
 class NotificationService {
     constructor() {

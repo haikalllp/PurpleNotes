@@ -42,7 +42,12 @@ export class Note {
      */
     markNotified() {
         this.notified = true;
-        Note.save();
+        const notes = Note.getAll();
+        const noteIndex = notes.findIndex(n => n.id === this.id);
+        if (noteIndex !== -1) {
+            notes[noteIndex] = this;
+            Note.save(notes);
+        }
     }
 
     /**
