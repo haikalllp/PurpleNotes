@@ -5,7 +5,7 @@
 /**
  * Task List Container
  */
-.task-list {
+ .task-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -24,7 +24,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    cursor: pointer;
     user-select: none;
     position: relative;
     transition: transform 0.2s ease-out,
@@ -168,7 +167,6 @@
     font-size: 1rem;
     line-height: 1;
     opacity: 0;
-    cursor: pointer;
     transition: opacity 0.2s ease-out,
                 color 0.2s ease-out,
                 background-color 0.2s ease-out;
@@ -318,7 +316,7 @@
     .task-form {
         padding: var(--space-4);
     }
-    
+
     .task-form .form-group {
         flex-direction: column;
     }
