@@ -24,16 +24,40 @@ function runCommand(command, args) {
     });
 }
 
-// Helper function to kill existing Node processes
+// Helper function to kill existing Node processes (Windows-compatible)
 async function killExistingServers() {
     try {
-        // Get current process ID
         const currentPid = process.pid;
-        // Kill all node processes except the current one
-        await runCommand('taskkill', ['/F', '/IM', 'node.exe', '/FI', `PID ne ${currentPid}`]);
+
+        // Use PowerShell to kill processes
+        const command = `Get-Process node | Where-Object { $_.Id -ne ${currentPid} } | Stop-Process -Force`;
+        const childProcess = spawn('powershell.exe', ['-Command', command], {
+            stdio: 'pipe',
+            shell: true
+        });
+
+        // Log PowerShell output
+        childProcess.stdout.on('data', (data) => {
+            console.log(`PowerShell stdout: ${data}`);
+        });
+
+        childProcess.stderr.on('data', (data) => {
+            console.error(`PowerShell stderr: ${data}`);
+        });
+
+        await new Promise((resolve, reject) => {
+            childProcess.on('close', (code) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject(`PowerShell exited with code ${code}`);
+                }
+            });
+        });
+
         await new Promise(resolve => setTimeout(resolve, 2000));
     } catch (error) {
-        console.warn('Warning: Failed to kill existing servers:', error.message);
+        console.warn('Warning: Failed to kill existing servers:', error);
     }
 }
 
@@ -79,20 +103,26 @@ async function main() {
         // Start development server
         console.log('Starting Purple Notes...');
         const server = spawn('npm.cmd', ['run', 'dev', '--', '--no-browser'], {
-            stdio: 'inherit',
+            stdio: 'pipe', // Prevents new terminal window
             shell: true,
-            detached: true,
             windowsHide: true,
-            cwd: __dirname // Set the working directory
+            cwd: __dirname
         });
 
-        // Handle server errors
+        // Log server output
+        server.stdout.on('data', (data) => {
+            console.log(`Server: ${data}`);
+        });
+
+        server.stderr.on('data', (data) => {
+            console.error(`Server error: ${data}`);
+        });
+
         server.on('error', (error) => {
-            console.error('Server error:', error);
+            console.error('Failed to start server:', error);
             process.exit(1);
         });
 
-        // Keep the server running
         server.unref();
 
         // Wait for server to start
@@ -170,8 +200,6 @@ async function main() {
         }
 
         readline.close();
-
-        // Keep the script running and monitor for browser closure
         process.stdin.resume();
         console.log('\nPress Ctrl+C to exit...');
 
