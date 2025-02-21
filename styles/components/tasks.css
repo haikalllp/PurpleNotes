@@ -1,0 +1,365 @@
+/*------------------------------------*\
+  #TASKS
+\*------------------------------------*/
+
+/**
+ * Task List Container
+ */
+ .task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+/**
+ * Task Item
+ */
+.task-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    position: relative;
+    transition: transform 0.2s ease-out,
+                box-shadow 0.2s ease-out,
+                border-color 0.2s ease-out;
+    will-change: transform, box-shadow, border-color;
+    overflow: hidden; /* For ripple effect */
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary-light);
+}
+
+/**
+ * Press and Hold States
+ */
+.task-item.being-pressed {
+    border-color: var(--primary-light);
+}
+
+.task-item.ready-to-drag {
+    cursor: grab;
+}
+
+.drag-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: var(--primary);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+    animation: dragRipple 0.3s ease-out forwards;
+}
+
+@keyframes dragRipple {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(40);
+        opacity: 0;
+    }
+}
+
+/**
+ * Task Content
+ */
+.task-content {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex: 1;
+    min-height: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0;
+}
+
+/**
+ * Task Checkbox
+ */
+.task-item input[type="checkbox"] {
+    margin: 0;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1.5px solid var(--border);
+    background-color: var(--surface);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    will-change: transform;
+}
+
+/* Checkmark */
+.task-item input[type="checkbox"]::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-on-primary);
+    font-size: 9px;
+    line-height: 1;
+    font-weight: bold;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.task-item input[type="checkbox"]:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.task-item input[type="checkbox"]:checked::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Checkbox Animation */
+@keyframes checkPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes uncheckPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.8); }
+    100% { transform: scale(1); }
+}
+
+/**
+ * Task Text
+ */
+.task-text {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    padding: 0.25rem 0;
+}
+
+/**
+ * Task Delete Button
+ */
+.task-delete-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    padding: 0.5rem;
+    margin: -0.5rem;
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.2s ease-out,
+                color 0.2s ease-out,
+                background-color 0.2s ease-out;
+    border-radius: var(--radius);
+}
+
+.task-delete-btn:hover {
+    color: var(--error);
+    background-color: color-mix(in srgb, var(--error) 5%, transparent);
+}
+
+/**
+ * Task States
+ */
+.task-item.completed {
+    background-color: color-mix(in srgb, var(--primary) 2%, var(--surface));
+    border-color: color-mix(in srgb, var(--primary) 25%, var(--border));
+}
+
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    text-decoration-color: var(--primary);
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.task-item.completed .task-delete-btn {
+    opacity: 0.6;
+}
+
+.task-item.completed:hover .task-delete-btn {
+    opacity: 1;
+}
+
+/**
+ * Task Hover State
+ */
+.task-item:hover {
+    border-color: var(--primary-light);
+}
+
+/**
+ * Drag and Drop States
+ */
+.task-item.dragging {
+    cursor: grabbing;
+    opacity: 0.98;
+    background: var(--surface);
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow);
+    z-index: 100;
+    transform: scale(1.02);
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-item.ghost {
+    opacity: 0.4;
+    background-color: color-mix(in srgb, var(--primary) 3%, var(--surface));
+    transform: scale(0.98);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.task-item.drop-target::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 2px dashed var(--primary-light);
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    animation: targetPulse 1.5s ease-in-out infinite;
+}
+
+.task-item.drop-target-above::after,
+.task-item.drop-target-below::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    pointer-events: none;
+    transform-origin: left;
+    animation: dropIndicator 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.task-item.drop-target-above::after {
+    top: -1px;
+}
+
+.task-item.drop-target-below::after {
+    bottom: -1px;
+}
+
+@keyframes targetPulse {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes dropIndicator {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+/* Press and Hold States */
+.task-item.being-pressed {
+    border-color: var(--primary-light);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-item.ready-to-drag {
+    cursor: grab;
+}
+
+.drag-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: var(--primary);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+    animation: dragRipple 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes dragRipple {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.4;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(40);
+        opacity: 0;
+    }
+}
+.task-item.fade-out {
+    pointer-events: none;
+    animation: taskFadeOut 0.2s ease-out forwards;
+}
+
+@keyframes taskFadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+/* Empty State */
+.task-list:empty::after {
+    content: 'No tasks yet';
+    display: block;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    padding: 2rem;
+    opacity: 0.6;
+}
+
+/**
+ * Task Form
+ */
+.task-form .form-group {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.task-form input {
+    flex: 1;
+}
+
+.task-form .primary-btn {
+    white-space: nowrap;
+}
+
+/**
+ * Responsive Styles
+ */
+@media (max-width: 768px) {
+    .task-form {
+        padding: var(--space-4);
+    }
+
+    .task-form .form-group {
+        flex-direction: column;
+    }
+
+    .task-item {
+        padding: 0.875rem 1rem;
+    }
+}

@@ -1,0 +1,111 @@
+/*------------------------------------*\
+  #LAYOUT-AND-GRID
+\*------------------------------------*/
+
+/**
+ * Main App Container
+ * Ensures minimum height and proper flex layout
+ */
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/**
+ * Container
+ * Sets max-width and standard padding
+ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-8);
+    width: 100%;
+}
+
+/**
+ * Main Layout Grid
+ * Two-column layout for notes and tasks
+ */
+.main-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-8) calc(var(--space-8) * 3);
+    position: relative;
+    padding: var(--space-8) var(--space-4);
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+/**
+ * Section Headers
+ */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-header h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    opacity: 0.95;
+}
+
+/**
+ * Section Divider
+ * Visual separator between notes and tasks
+ */
+.section-divider {
+    position: absolute;
+    left: 50%;
+    top: var(--space-8);
+    bottom: var(--space-8);
+    width: 2px;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--primary-light) 15%,
+        var(--primary) 50%,
+        var(--primary-light) 85%,
+        transparent
+    );
+    transform: translateX(-50%);
+}
+
+/**
+ * Section Positioning
+ */
+.notes-section {
+    padding-right: var(--space-6);
+    margin-left: 0;
+}
+
+.tasks-section {
+    padding-left: var(--space-4);
+    margin-right: 0;
+}
+
+/**
+ * Responsive Design
+ */
+@media (max-width: 768px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+    
+    .section-divider {
+        display: none;
+    }
+    
+    .container {
+        padding: var(--space-4);
+    }
+}

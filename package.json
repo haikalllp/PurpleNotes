@@ -1,0 +1,16 @@
+{
+  "name": "purple-notes",
+  "version": "1.0.0",
+  "description": "A browser-based notes and tasks application",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node start.js",
+    "dev": "npx live-server --port=5500"
+  },
+  "author": "Shrewdy",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

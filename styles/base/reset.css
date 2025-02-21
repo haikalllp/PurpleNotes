@@ -1,0 +1,75 @@
+/*------------------------------------*\
+  #RESET-AND-BASE
+\*------------------------------------*/
+
+/**
+ * Basic Reset
+ * Removes default margins, paddings, and sets box-sizing
+ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/**
+ * Base HTML Elements
+ * Sets foundational styles for the document
+ */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    background: var(--background);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease;
+}
+
+/**
+ * Typography Reset
+ * Consistent heading styles
+ */
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+}
+
+/**
+ * Form Elements Reset
+ */
+input, textarea {
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+/**
+ * Button Reset
+ */
+button {
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+/**
+ * List Reset
+ */
+ul, ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/**
+ * Remove text decoration from links
+ */
+a {
+    text-decoration: none;
+    color: inherit;
+}

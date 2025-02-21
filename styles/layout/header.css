@@ -1,0 +1,92 @@
+/*------------------------------------*\
+  #HEADER
+\*------------------------------------*/
+
+/**
+ * App Header
+ * Fixed header with glass effect and navigation
+ */
+.app-header {
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/**
+ * Header Content Layout
+ */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4) var(--space-8);
+}
+
+/**
+ * Logo Styling
+ */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.logo-icon {
+    font-size: 1.75rem;
+    color: var(--primary);
+}
+
+.logo h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/**
+ * Theme Toggle Button
+ */
+.theme-toggle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow);
+}
+
+.light-mode::after {
+    content: "☀";
+}
+
+.dark-mode::after {
+    content: "☾";
+}
+
+/**
+ * Responsive Header
+ */
+@media (max-width: 768px) {
+    .header-content {
+        padding: var(--space-4);
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+}

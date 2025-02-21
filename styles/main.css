@@ -1,0 +1,34 @@
+/*------------------------------------*\
+  #MAIN-STYLESHEET
+\*------------------------------------*/
+
+/**
+ * This is the main stylesheet that imports all modular CSS files.
+ * The order of imports is important:
+ * 1. Variables and Utils (must come first as they're used throughout)
+ * 2. Base styles
+ * 3. Layout components
+ * 4. UI components
+ */
+
+/* Variables and Utils
+   ========================================================================== */
+@import "base/variables.css";
+@import "base/utils.css";
+
+/* Base Styles
+   ========================================================================== */
+@import "base/reset.css";
+
+/* Layout Components
+   ========================================================================== */
+@import "layout/grid.css";
+@import "layout/header.css";
+@import "layout/footer.css";
+
+/* UI Components
+   ========================================================================== */
+@import "components/forms.css";
+@import "components/notes.css";
+@import "components/tasks.css";
+@import "components/dialogs.css";

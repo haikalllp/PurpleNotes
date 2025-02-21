@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Purple Notes</title>
     <link rel="icon" type="image/x-icon" href="icons/icon2.ico">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
     <div class="app-container">
@@ -27,12 +27,12 @@
                 <section class="notes-section">
                     <div class="section-header">
                         <h2>Notes</h2>
-                        <button class="clear-btn" onclick="clearAllNotes()">
+                        <button class="clear-btn">
                             <span class="clear-icon">×</span>
                             <span>Clear All</span>
                         </button>
                     </div>
-                    
+
                     <form id="noteForm" class="note-form">
                         <div class="form-group">
                             <input type="text" id="noteTitle" placeholder="Note title" required autocomplete="off">
@@ -65,7 +65,7 @@
                 <section class="tasks-section">
                     <div class="section-header">
                         <h2>Tasks</h2>
-                        <button class="clear-btn" onclick="clearAllTasks()">
+                        <button class="clear-btn">
                             <span class="clear-icon">×</span>
                             <span>Clear All</span>
                         </button>
@@ -89,67 +89,12 @@
         </main>
 
         <footer class="app-footer">
-            <p>&copy; 2025 Purple Notes - Shrewdy. All rights reserved.</p>
+            <p>&copy; 2025 Purple Notes - By Shrewdy. All rights reserved.</p>
             <button class="clear-cache-btn">Clear Cache</button>
         </footer>
     </div>
 
-    <template id="note-template">
-        <div class="note-card">
-            <div class="note-header">
-                <h3 class="note-title"></h3>
-                <button class="pin-button" aria-label="Pin note">
-                    <span class="pin-icon"></span>
-                </button>
-            </div>
-            <p class="note-content"></p>
-            <div class="reminder-info">
-                <div class="reminder-status"></div>
-                <div class="progress-bar-wrapper">
-                    <div class="progress-bar">
-                        <div class="progress"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="note-meta">
-                <div class="note-date"></div>
-                <div class="note-actions">
-                    <button class="delete-btn" aria-label="Delete note">
-                        <span class="delete-icon">×</span>
-                        Delete
-                    </button>
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <template id="task-template">
-        <li class="task-item">
-            <label class="task-label">
-                <input type="checkbox">
-                <span class="task-text"></span>
-            </label>
-            <button class="task-delete-btn" aria-label="Delete task">×</button>
-        </li>
-    </template>
-
-    <template id="notification-template">
-        <div class="notification-overlay">
-            <div class="notification-card">
-                <div class="notification-header">
-                    <h3 class="notification-title"></h3>
-                    <div class="notification-time"></div>
-                </div>
-                <div class="notification-body">
-                    <p></p>
-                </div>
-                <div class="notification-footer">
-                    <button class="primary-btn notification-continue">Dismiss</button>
-                </div>
-            </div>
-        </div>
-    </template>
-
+    <!-- Templates -->
     <template id="confirmation-template">
         <div class="confirmation-dialog">
             <div class="confirmation-content">
@@ -165,7 +110,7 @@
         </div>
     </template>
 
-    <audio id="notificationSound" src="notification.mp3"></audio>
-    <script src="app.js"></script>
+    <!-- Load main script as module -->
+    <script type="module" src="app.js"></script>
 </body>
 </html>
