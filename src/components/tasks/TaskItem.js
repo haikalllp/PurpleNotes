@@ -321,25 +321,32 @@ export class TaskItem {
      * @returns {{ element: HTMLElement, position: 'above' | 'below' } | null}
      */
     getDropPosition(y) {
-        const taskElements = [...document.querySelectorAll('.task-item:not(.dragging)')];
-        const closestTask = taskElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
+        const taskElements = [...document.querySelectorAll('.task-item:not(.dragging)')].filter(el => {
+            const rect = el.getBoundingClientRect();
+            return y >= rect.top - 20 && y <= rect.bottom + 20; // Add a small buffer zone
+        });
+        
+        if (taskElements.length === 0) return null;
+        
+        // Find the closest task element to the cursor
+        let targetTask = taskElements.reduce((closest, task) => {
+            const box = task.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
-            
-            if (offset < 0 && offset > closest.offset) {
-                return { offset, element: child };
+            if (!closest.task || Math.abs(offset) < Math.abs(closest.offset)) {
+                return { task, offset };
             }
             return closest;
-        }, { offset: Number.NEGATIVE_INFINITY });
+        }, { task: null, offset: null });
 
-        if (!closestTask.element) return null;
+        if (!targetTask.task) return null;
 
-        const box = closestTask.element.getBoundingClientRect();
-        const position = y < box.top + box.height / 2 ? 'above' : 'below';
-
+        const box = targetTask.task.getBoundingClientRect();
+        const threshold = box.height * 0.5; // Use middle point as threshold
+        const relativeY = y - box.top;
+        
         return {
-            element: closestTask.element,
-            position
+            element: targetTask.task,
+            position: relativeY < threshold ? 'above' : 'below'
         };
     }
 
