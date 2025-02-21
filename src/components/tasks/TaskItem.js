@@ -37,7 +37,7 @@ export class TaskItem {
             <li class="task-item ${this.task.completed ? 'completed' : ''}"
                 data-task-id="${this.task.id}"
                 data-index="${this.index}"
-                draggable="false"
+                draggable="true"
                 role="listitem"
                 aria-label="${this.task.completed ? 'Completed task' : 'Incomplete task'}: ${this.task.text}">
                 <div class="task-content">
@@ -260,7 +260,6 @@ export class TaskItem {
      * @param {DragEvent} e
      */
     handleDragOver(e) {
-        if (this.isTransitioning || !this.isDragging) return;
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
 
@@ -298,12 +297,18 @@ export class TaskItem {
     handleDrop(e) {
         if (this.isTransitioning) return;
         e.preventDefault();
+        e.stopPropagation();
         
         const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-        const toIndex = parseInt(this.element.dataset.index);
+        const dropInfo = this.getDropPosition(e.clientY);
         
-        if (!isNaN(fromIndex) && !isNaN(toIndex) && this.onDrop && fromIndex !== toIndex) {
-            this.onDrop(fromIndex, toIndex);
+        if (dropInfo) {
+            const targetIndex = parseInt(dropInfo.element.dataset.index);
+            const toIndex = dropInfo.position === 'below' ? targetIndex + 1 : targetIndex;
+            
+            if (!isNaN(fromIndex) && !isNaN(toIndex) && this.onDrop && fromIndex !== toIndex) {
+                this.onDrop(fromIndex, toIndex);
+            }
         }
         
         this.element.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
