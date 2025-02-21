@@ -5,7 +5,7 @@
 /**
  * Form Container
  */
-.note-form, .task-form {
+ .note-form, .task-form {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -176,9 +176,11 @@ textarea {
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    margin-right: var(--space-4);
-    padding: var(--space-2) 0;
-    max-width: 600px;
+    margin-right: 0;
+    padding: var(--space-2) var(--space-4);
+    width: 100%;
+    max-width: 800px;
+    z-index: 1;
 }
 
 .reminder-label {
@@ -194,11 +196,11 @@ textarea {
 
 .reminder-input {
     position: absolute;
-    left: 135px;
+    left: 150px;
     top: 50%;
     transform: translateY(-50%);
-    width: calc(100% - 145px);
-    max-width: 380px;
+    width: calc(100% - 400px);
+    max-width: 200px;
     height: 36px;
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border);
@@ -207,7 +209,8 @@ textarea {
     color: var(--text-primary);
     display: none;
     transition: var(--transition);
-    z-index: 1;
+    z-index: 2;
+    box-sizing: border-box;
 }
 
 .reminder-input:focus {
@@ -246,15 +249,12 @@ textarea {
         flex-direction: column;
         gap: var(--space-3);
     }
-    
     .reminder-toggle {
         width: 100%;
         max-width: 100%;
     }
-    
     .reminder-input {
         width: calc(100% - 145px);
-        left: 135px;
         max-width: none;
     }
     
