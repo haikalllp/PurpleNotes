@@ -8,17 +8,17 @@
     --primary-light: #8B5CF6;
     --primary-dark: #5B21B6;
     --surface: #FFFFFF;
-    --background: #F8FAFC;
+    --background: #F1F5F9;
     --error: #EF4444;
     --success: #28a745;
     
     /* Text Colors */
-    --text-primary: #1E293B;
-    --text-secondary: #64748B;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
     --text-on-primary: #FFFFFF;
     
     /* Border & Shadow */
-    --border: #E2E8F0;
+    --border: #CBD5E1;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
