@@ -5,11 +5,12 @@
 /**
  * Notification Overlay
  */
-.notification-overlay, .confirmation-dialog {
+.notification-overlay, .confirmation-dialog, .dialog-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -28,14 +29,16 @@
     padding: 0;
     box-shadow: var(--shadow-lg);
     animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    overflow: visible;
+    overflow: hidden;
     transform-style: preserve-3d;
+    text-align: center;
 }
 
 .notification-header {
     padding: var(--space-6);
     border-bottom: 1px solid var(--border);
     background: var(--background);
+    text-align: center;
 }
 
 .notification-title {
@@ -45,11 +48,13 @@
     margin-bottom: var(--space-2);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    text-align: center;
 }
 
 .notification-time {
     font-size: 0.875rem;
     color: var(--text-secondary);
+    text-align: center;
 }
 
 .notification-body {
@@ -57,6 +62,7 @@
     margin: var(--space-4);
     background: var(--background);
     border-radius: var(--radius-lg);
+    text-align: center;
 }
 
 .notification-body p {
@@ -65,6 +71,7 @@
     color: var(--text-primary);
     opacity: 0.9;
     margin: 0;
+    text-align: center;
 }
 
 .notification-footer {
@@ -73,6 +80,7 @@
     justify-content: center;
     border-top: 1px solid var(--border);
     background: var(--background);
+    text-align: center;
 }
 
 /**
@@ -80,26 +88,57 @@
  */
 .confirmation-content {
     background: var(--surface);
-    border-radius: var(--radius-xl);
+    border-radius: 16px;
     width: 90%;
     max-width: 420px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
     animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     text-align: center;
+    padding: var(--space-6) var(--space-8);
 }
 
 .confirmation-header {
-    padding: var(--space-8) var(--space-8) var(--space-4);
-    background: var(--background);
-    border-bottom: 1px solid var(--border);
+    padding: var(--space-4) var(--space-4) var(--space-6);
+    background: var(--surface);
+    text-align: center;
+    border-bottom: none;
 }
 
 .confirmation-header p {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--text-primary);
     line-height: 1.5;
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-2);
+    text-align: center;
+}
+
+.confirmation-header .subtext {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: var(--space-2);
+    line-height: 1.5;
+    display: block;
+    text-align: center;
+}
+
+.confirmation-buttons {
+    padding: var(--space-4) var(--space-6);
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+    background: var(--surface);
+    border-top: none;
+}
+
+.confirmation-buttons button {
+    min-width: 120px;
+    padding: var(--space-3) var(--space-5);
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-align: center;
 }
 
 .confirmation-header .subtext {
