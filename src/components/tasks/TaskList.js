@@ -129,11 +129,35 @@ export class TaskList {
     handleTaskDrop(fromIndex, toIndex) {
         if (fromIndex === toIndex) return;
         
-        // Use Task.reorder to handle the reordering
-        Task.reorder(fromIndex, toIndex);
-        
-        // Reload tasks to ensure we have the latest order
-        this.loadTasks();
+        // Ensure indices are valid
+        if (fromIndex < 0 || toIndex < 0 || fromIndex >= this.tasks.length || toIndex > this.tasks.length) {
+            console.error('Invalid indices for task reordering');
+            return;
+        }
+
+        // Create a copy of tasks array and get the task being moved
+        const updatedTasks = [...this.tasks];
+        const [movedTask] = updatedTasks.splice(fromIndex, 1);
+
+        // Insert the task at the new position
+        updatedTasks.splice(toIndex, 0, movedTask);
+
+        // Update the tasks array
+        this.tasks = updatedTasks;
+
+        // Update all task indices immediately
+        this.tasks.forEach((task, index) => {
+            const taskItem = this.taskItems.get(task.id);
+            if (taskItem) {
+                taskItem.updateIndex(index);
+            }
+        });
+
+        // Save to storage
+        Task.save(this.tasks);
+
+        // Update the display to reflect changes
+        this.displayTasks();
     }
 
     /**

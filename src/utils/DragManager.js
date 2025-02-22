@@ -13,6 +13,12 @@ export class DragManager {
         this.dragStarted = false;
         this.pressStartTime = 0;
         this.PRESS_DELAY = 200; // ms before drag starts
+        this.scrollInterval = null;
+        this.SCROLL_SPEED = 15; // pixels per frame
+        this.SCROLL_ZONE = 50; // pixels from edge to trigger scroll
+        this.lastTouchY = 0; // For touch momentum
+        this.touchVelocity = 0;
+        this.lastTouchTime = 0;
     }
 
     init(container) {
@@ -25,10 +31,16 @@ export class DragManager {
         document.addEventListener('mousemove', this.handleMouseMove.bind(this));
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
 
-        // Touch events
+        // Touch events with improved handling
         this.container.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
         document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
         document.addEventListener('touchend', this.handleTouchEnd.bind(this));
+
+        // Keyboard navigation
+        this.container.addEventListener('keydown', this.handleKeyDown.bind(this));
+
+        // Accessibility
+        this.setupAccessibility();
     }
 
     handleMouseDown(e) {
@@ -104,18 +116,38 @@ export class DragManager {
     handleTouchMove(e) {
         if (!this.dragStarted) return;
         e.preventDefault();
-        this.updateDragPosition(e.touches[0].clientY);
+        
+        const touch = e.touches[0];
+        const currentTime = Date.now();
+        const timeDelta = currentTime - this.lastTouchTime;
+        
+        // Calculate touch velocity for momentum
+        if (timeDelta > 0) {
+            this.touchVelocity = (touch.clientY - this.lastTouchY) / timeDelta;
+        }
+        
+        this.lastTouchY = touch.clientY;
+        this.lastTouchTime = currentTime;
+        
+        this.updateDragPosition(touch.clientY);
     }
 
     updateDragPosition(clientY) {
         const deltaY = clientY - this.initialMouseY;
         const newY = this.initialY + deltaY;
 
-        // Update ghost element position
-        this.ghostElement.style.top = `${newY}px`;
+        // Update ghost element position with smooth animation
+        this.ghostElement.style.transform = `translateY(${deltaY}px)`;
+        this.ghostElement.style.top = `${this.initialY}px`;
+
+        // Handle auto-scrolling
+        this.handleAutoScroll(clientY);
 
         // Find potential drop target
         this.updateDropTarget(clientY);
+
+        // Update ARIA live region
+        this.updateAccessibilityStatus();
     }
 
     updateDropTarget(clientY) {
@@ -260,21 +292,142 @@ export class DragManager {
     cleanup() {
         if (this.draggedElement) {
             this.draggedElement.classList.remove('dragging', 'being-pressed', 'ready-to-drag');
+            this.draggedElement.removeAttribute('aria-grabbed');
         }
 
         if (this.currentDropTarget) {
             this.currentDropTarget.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
+            this.currentDropTarget.removeAttribute('aria-dropeffect');
         }
 
         if (this.ghostElement && this.ghostElement.parentNode) {
             this.ghostElement.remove();
         }
 
+        // Clear auto-scroll interval
+        if (this.scrollInterval) {
+            clearInterval(this.scrollInterval);
+            this.scrollInterval = null;
+        }
+
+        // Reset touch tracking
+        this.lastTouchY = 0;
+        this.touchVelocity = 0;
+        this.lastTouchTime = 0;
+
         this.draggedElement = null;
         this.ghostElement = null;
         this.currentDropTarget = null;
         this.dropPosition = null;
         this.dragStarted = false;
+    }
+
+    handleAutoScroll(clientY) {
+        const containerRect = this.container.getBoundingClientRect();
+        const scrollTop = this.container.scrollTop;
+
+        // Clear existing scroll interval
+        if (this.scrollInterval) {
+            clearInterval(this.scrollInterval);
+            this.scrollInterval = null;
+        }
+
+        // Check if cursor is in scroll zones
+        if (clientY < containerRect.top + this.SCROLL_ZONE) {
+            // Scroll up
+            this.scrollInterval = setInterval(() => {
+                this.container.scrollTop = Math.max(0, scrollTop - this.SCROLL_SPEED);
+                this.updateDropTarget(clientY);
+            }, 16);
+        } else if (clientY > containerRect.bottom - this.SCROLL_ZONE) {
+            // Scroll down
+            this.scrollInterval = setInterval(() => {
+                this.container.scrollTop = scrollTop + this.SCROLL_SPEED;
+                this.updateDropTarget(clientY);
+            }, 16);
+        }
+    }
+
+    handleKeyDown(e) {
+        const taskItem = e.target.closest('.task-item');
+        if (!taskItem) return;
+
+        switch (e.key) {
+            case 'ArrowUp':
+                e.preventDefault();
+                this.moveTaskUp(taskItem);
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                this.moveTaskDown(taskItem);
+                break;
+            case 'Space':
+            case 'Enter':
+                e.preventDefault();
+                if (!this.dragStarted) {
+                    this.setupDragStart(taskItem, taskItem.getBoundingClientRect().top);
+                }
+                break;
+            case 'Escape':
+                if (this.dragStarted) {
+                    this.cleanup();
+                }
+                break;
+        }
+    }
+
+    moveTaskUp(taskItem) {
+        const prev = taskItem.previousElementSibling;
+        if (prev) {
+            taskItem.parentNode.insertBefore(taskItem, prev);
+            this.announceMove('up');
+            this.dispatchReorderEvent();
+        }
+    }
+
+    moveTaskDown(taskItem) {
+        const next = taskItem.nextElementSibling;
+        if (next) {
+            taskItem.parentNode.insertBefore(next, taskItem);
+            this.announceMove('down');
+            this.dispatchReorderEvent();
+        }
+    }
+
+    setupAccessibility() {
+        // Create ARIA live region
+        this.liveRegion = document.createElement('div');
+        this.liveRegion.setAttribute('aria-live', 'polite');
+        this.liveRegion.setAttribute('class', 'sr-only');
+        document.body.appendChild(this.liveRegion);
+
+        // Add keyboard instructions
+        const tasks = this.container.querySelectorAll('.task-item');
+        tasks.forEach(task => {
+            task.setAttribute('role', 'listitem');
+            task.setAttribute('tabindex', '0');
+            task.setAttribute('aria-label', `Task: ${task.textContent}. Use arrow keys to reorder.`);
+        });
+    }
+
+    updateAccessibilityStatus() {
+        if (!this.draggedElement || !this.currentDropTarget) return;
+
+        const draggedText = this.draggedElement.textContent;
+        const targetText = this.currentDropTarget.textContent;
+        const position = this.dropPosition === 'above' ? 'before' : 'after';
+
+        this.liveRegion.textContent = `Moving task "${draggedText}" ${position} "${targetText}"`;
+    }
+
+    announceMove(direction) {
+        this.liveRegion.textContent = `Task moved ${direction}`;
+    }
+
+    dispatchReorderEvent() {
+        this.container.dispatchEvent(new CustomEvent('tasksReordered', {
+            detail: { tasks: Array.from(this.container.children) }
+        }));
     }
 
     destroy() {
@@ -285,5 +438,11 @@ export class DragManager {
         this.container.removeEventListener('touchstart', this.handleTouchStart);
         document.removeEventListener('touchmove', this.handleTouchMove);
         document.removeEventListener('touchend', this.handleTouchEnd);
+        this.container.removeEventListener('keydown', this.handleKeyDown);
+        
+        // Remove accessibility elements
+        if (this.liveRegion) {
+            this.liveRegion.remove();
+        }
     }
 }

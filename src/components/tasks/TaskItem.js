@@ -233,12 +233,33 @@ export class TaskItem {
         }
         this.isDragging = true;
         e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', this.index.toString());
-        
-        requestAnimationFrame(() => {
-            this.element.classList.add('dragging');
-            this.element.classList.add('ghost');
+        // Store both the task ID and index to ensure we're moving the correct task
+        const dragData = JSON.stringify({
+            taskId: this.task.id,
+            index: this.index
         });
+        e.dataTransfer.setData('text/plain', dragData);
+        
+        // Add ghost effect immediately
+        this.element.classList.add('dragging');
+        
+        // Create and append ghost element
+        const rect = this.element.getBoundingClientRect();
+        const ghost = this.element.cloneNode(true);
+        ghost.classList.add('ghost');
+        ghost.style.width = `${rect.width}px`;
+        ghost.style.height = `${rect.height}px`;
+        ghost.style.position = 'fixed';
+        ghost.style.top = '-1000px';
+        ghost.style.opacity = '0.8';
+        document.body.appendChild(ghost);
+        
+        e.dataTransfer.setDragImage(ghost, rect.width / 2, rect.height / 2);
+        
+        // Remove ghost element after drag starts
+        setTimeout(() => {
+            document.body.removeChild(ghost);
+        }, 0);
     }
 
     /**
@@ -299,16 +320,26 @@ export class TaskItem {
         e.preventDefault();
         e.stopPropagation();
         
-        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-        const dropInfo = this.getDropPosition(e.clientY);
-        
-        if (dropInfo) {
-            const targetIndex = parseInt(dropInfo.element.dataset.index);
-            const toIndex = dropInfo.position === 'below' ? targetIndex + 1 : targetIndex;
+        try {
+            const dragData = JSON.parse(e.dataTransfer.getData('text/plain'));
+            const fromIndex = parseInt(dragData.index);
+            const dropInfo = this.getDropPosition(e.clientY);
             
-            if (!isNaN(fromIndex) && !isNaN(toIndex) && this.onDrop && fromIndex !== toIndex) {
-                this.onDrop(fromIndex, toIndex);
+            if (dropInfo) {
+                const targetIndex = parseInt(dropInfo.element.dataset.index);
+                let toIndex = dropInfo.position === 'below' ? targetIndex + 1 : targetIndex;
+                
+                // Adjust toIndex if dropping below the dragged item
+                if (fromIndex < targetIndex) {
+                    toIndex--;
+                }
+                
+                if (!isNaN(fromIndex) && !isNaN(toIndex) && this.onDrop && fromIndex !== toIndex) {
+                    this.onDrop(fromIndex, toIndex);
+                }
             }
+        } catch (error) {
+            console.error('Error processing drag data:', error);
         }
         
         this.element.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
@@ -321,32 +352,40 @@ export class TaskItem {
      * @returns {{ element: HTMLElement, position: 'above' | 'below' } | null}
      */
     getDropPosition(y) {
-        const taskElements = [...document.querySelectorAll('.task-item:not(.dragging)')].filter(el => {
-            const rect = el.getBoundingClientRect();
-            return y >= rect.top - 20 && y <= rect.bottom + 20; // Add a small buffer zone
-        });
-        
+        // Get all task elements including the dragging one
+        const taskElements = [...document.querySelectorAll('.task-item')];
         if (taskElements.length === 0) return null;
-        
-        // Find the closest task element to the cursor
-        let targetTask = taskElements.reduce((closest, task) => {
+
+        // Find the closest task element based on vertical position
+        let closestTask = null;
+        let closestDistance = Infinity;
+        let position = 'below';
+
+        for (const task of taskElements) {
             const box = task.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (!closest.task || Math.abs(offset) < Math.abs(closest.offset)) {
-                return { task, offset };
+            const taskMiddle = box.top + box.height / 2;
+            const distance = Math.abs(y - taskMiddle);
+
+            // If we're very close to the middle of a task, prefer that task
+            if (distance < box.height * 0.2) {
+                closestTask = task;
+                position = y < taskMiddle ? 'above' : 'below';
+                break;
             }
-            return closest;
-        }, { task: null, offset: null });
 
-        if (!targetTask.task) return null;
+            // Check if this task is closer than the previous closest
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestTask = task;
+                position = y < taskMiddle ? 'above' : 'below';
+            }
+        }
 
-        const box = targetTask.task.getBoundingClientRect();
-        const threshold = box.height * 0.5; // Use middle point as threshold
-        const relativeY = y - box.top;
-        
+        if (!closestTask) return null;
+
         return {
-            element: targetTask.task,
-            position: relativeY < threshold ? 'above' : 'below'
+            element: closestTask,
+            position: position
         };
     }
 
