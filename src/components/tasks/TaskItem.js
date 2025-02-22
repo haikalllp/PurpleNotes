@@ -240,8 +240,9 @@ export class TaskItem {
         });
         e.dataTransfer.setData('text/plain', dragData);
         
-        // Add ghost effect immediately
+        // Add ghost effect and set cursor style
         this.element.classList.add('dragging');
+        document.body.style.cursor = 'grabbing';
         
         // Create and append ghost element
         const rect = this.element.getBoundingClientRect();
@@ -262,19 +263,15 @@ export class TaskItem {
         }, 0);
     }
 
-    /**
-     * Handle drag end event
-     * @private
-     */
     handleDragEnd() {
         this.isDragging = false;
         this.element.classList.remove('dragging', 'ghost');
+        document.body.style.cursor = '';
         
         document.querySelectorAll('.task-item').forEach(item => {
             item.classList.remove('drop-target', 'drop-target-above', 'drop-target-below');
         });
     }
-
     /**
      * Handle drag over event
      * @private
