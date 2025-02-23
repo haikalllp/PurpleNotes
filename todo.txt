@@ -1,0 +1,5 @@
+# DND kit
+drag and drop kit (react)
+
+# new page tab
+clipboard support for texts, emojis, images
