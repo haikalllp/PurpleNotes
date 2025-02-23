@@ -1,8 +1,8 @@
 /**
  * Represents a task in the application with robust state management
  */
-import StorageService from '../services/StorageService.js';
-import AudioService from '../services/AudioService.js';
+import StorageService from '../../react/services/StorageService.js';
+import AudioService from '../../react/services/AudioService.js';
 
 export class Task {
     /**

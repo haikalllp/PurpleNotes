@@ -1,7 +1,7 @@
 /**
  * Manages all audio playback in the application
  */
-import { AUDIO_CONFIG } from '../config.js';
+import { AUDIO_CONFIG } from '../config';
 
 class AudioService {
     constructor() {

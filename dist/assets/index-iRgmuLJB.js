@@ -6,7 +6,7 @@
                 </div>
             </div>
         `);document.body.appendChild(t),t.querySelector(".close-btn").addEventListener("click",()=>t.remove()),e>0&&setTimeout(()=>{t.isConnected&&t.remove()},e)}};class C{constructor({note:e,onDelete:t,onPin:s}){this.note=e,this.onDelete=t,this.onPin=s,this.element=this.createNoteElement(),this.initialize()}createNoteElement(){return p.createFromHTML(`
-            <div class="note-card ${this.note.pinned?"pinned":""}" 
+            <div class="note-card ${this.note.pinned?"pinned":""}"
                  data-reminder-time="${this.note.reminder||""}"
                  data-created-time="${this.note.created}"
                  ${this.note.reminder?`data-progress="${this.calculateProgress()}"`:""}>

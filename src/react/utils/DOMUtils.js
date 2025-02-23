@@ -1,7 +1,7 @@
 /**
  * DOM manipulation and utility functions
  */
-import { DOM_IDS } from '../config.js';
+import { DOM_IDS } from '../config';
 
 /**
  * Cache of DOM elements

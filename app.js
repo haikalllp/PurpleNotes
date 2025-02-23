@@ -1,14 +1,14 @@
 /**
  * Purple Notes - Main Application Entry Point
  */
-import { ThemeUtils } from './src/utils/ThemeUtils.js';
-import { NoteList } from './src/components/notes/NoteList.js';
-import { NoteForm } from './src/components/notes/NoteForm.js';
-import { TaskList } from './src/components/tasks/TaskList.js';
-import { TaskForm } from './src/components/tasks/TaskForm.js';
-import StorageService from './src/services/StorageService.js';
-import AudioService from './src/services/AudioService.js';
-import NotificationService from './src/services/NotificationService.js';
+import { ThemeUtils } from './src/react/utils/ThemeUtils.js';
+import { NoteList } from './src/react/components/notes/NoteList.js';
+import { NoteForm } from './src/react/components/notes/NoteForm.js';
+import { TaskList } from './src/react/components/tasks/TaskList.js';
+import { TaskForm } from './src/react/components/tasks/TaskForm.js';
+import StorageService from './src/react/services/StorageService.js';
+import AudioService from './src/react/services/AudioService.js';
+import NotificationService from './src/react/services/NotificationService.js';
 
 class PurpleNotesApp {
     constructor() {

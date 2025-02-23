@@ -1,9 +1,9 @@
 /**
  * Individual note card component
  */
-import { DOMUtils } from '../../../utils/DOMUtils.js';
-import { Note } from '../../../models/Note.js';
-import AudioService from '../../../services/AudioService.js';
+import { Note } from '../../models/Note.js';
+import { DOMUtils } from '../../utils/DOMUtils.js';
+import AudioService from '../../services/AudioService.js';
 
 export class NoteCard {
     /**
@@ -27,7 +27,7 @@ export class NoteCard {
      */
     createNoteElement() {
         const noteElement = DOMUtils.createFromHTML(`
-            <div class="note-card ${this.note.pinned ? 'pinned' : ''}" 
+            <div class="note-card ${this.note.pinned ? 'pinned' : ''}"
                  data-reminder-time="${this.note.reminder || ''}"
                  data-created-time="${this.note.created}"
                  ${this.note.reminder ? `data-progress="${this.calculateProgress()}"` : ''}>

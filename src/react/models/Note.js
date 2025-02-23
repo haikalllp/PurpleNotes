@@ -1,7 +1,7 @@
 /**
  * Represents a note in the application
  */
-import StorageService from '../services/StorageService.js';
+import StorageService from '../../react/services/StorageService.js';
 
 export class Note {
     /**

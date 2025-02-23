@@ -1,8 +1,8 @@
 /**
  * Note creation form component
  */
-import { Note } from '../../../models/Note.js';
-import { DOMUtils } from '../../../utils/DOMUtils.js';
+import { Note } from '../../models/Note.js';
+import { DOMUtils } from '../../utils/DOMUtils.js';
 
 export class NoteForm {
     /**

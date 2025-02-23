@@ -1,8 +1,8 @@
 /**
  * Individual task item component with enhanced interactions and transitions
  */
-import { Task } from '../../../models/Task.js';
-import { DOMUtils } from '../../../utils/DOMUtils.js';
+import { Task } from '../../models/Task.js';
+import { DOMUtils } from '../../utils/DOMUtils.js';
 
 export class TaskItem {
     /**
