@@ -1,9 +1,9 @@
 /**
  * Individual note card component
  */
-import { DOMUtils } from '../../utils/DOMUtils.js';
-import { Note } from '../../models/Note.js';
-import AudioService from '../../services/AudioService.js';
+import { DOMUtils } from '../../../utils/DOMUtils.js';
+import { Note } from '../../../models/Note.js';
+import AudioService from '../../../services/AudioService.js';
 
 export class NoteCard {
     /**

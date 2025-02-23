@@ -4,18 +4,28 @@ A browser-based notes and tasks application with reminders and theme support.
 
 ## Quick Start
 
-1. **Automatic Start (Recommended)**
-   - Double-click `start.bat`
-   - The application will install dependencies and open automatically
-
-2. **Manual Start**
-
+1. **Development Mode**
    ```bash
    # Install dependencies
    npm install
-
+   ```
+   ```bash
    # Start development server
    npm run dev
+   ```
+
+2. **Production Mode**
+   ```bash
+   # Build for production
+   npx vite build
+   ```
+   ```bash
+   # Preview production build
+   npx vite preview
+   ```
+   ```bash
+   # Serve production build (alternative)
+   npx serve dist
    ```
 
 ## Features
@@ -34,27 +44,36 @@ A browser-based notes and tasks application with reminders and theme support.
 - Node.js and npm installed
 - Modern web browser (Chrome, Firefox, Edge, or Safari)
 
-### Available Scripts
+## Available Scripts
 
-- `npm run dev` - Starts the development server with auto-reload
+- `npm run dev` - Starts the development server with hot reload
+- `npx vite build` - Creates optimized production build
+- `npx vite preview` - Previews production build locally
+- `npx serve dist` - Serves production build using static server
 - `npm start` - Starts the server without opening browser
 
 ### Project Structure
 
 ```
 purple-notes/
-├── src/
-│   ├── components/     # UI components
-│   ├── models/        # Data models
-│   ├── services/      # Application services
-│   └── utils/         # Utility functions
-├── styles/
-│   ├── base/          # Base styles and utilities
-│   ├── layout/        # Layout components
-│   ├── components/    # Component styles
-│   └── main.css       # Style entry point
-├── app.js            # Application entry point
-└── index.html        # Main HTML file
+├── src/               # Source code
+│   ├── react/         # React components
+│       ├── components/   # UI components
+│       ├── models/        # Data models
+│       ├── services/      # Core services
+│       └── utils/         # Utility functions
+│   ├── config.js        # application-wide configuration and settings
+├── styles/           # Modular CSS files
+│   ├── base/         # Base styles
+│   ├── layout/       # Layout components
+│   ├── components/   # Component styles
+│   └── main.css      # CSS entry point
+├── docs/             # Documentation
+├── sounds/           # Audio assets
+├── icons/            # Visual assets
+├── app.js           # Application entry
+├── index.html       # Main HTML
+└── package.json     # Project config
 ```
 
 ### CSS Architecture

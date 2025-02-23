@@ -1,7 +1,7 @@
 /**
  * Theme management utilities
  */
-import { THEMES } from '../config.js';
+import { THEMES } from '../../config.js';
 import StorageService from '../services/StorageService.js';
 import AudioService from '../services/AudioService.js';
 

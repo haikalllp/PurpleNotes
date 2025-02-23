@@ -2,7 +2,7 @@
  * Manages all localStorage operations for the application with support for
  * cross-tab synchronization and atomic operations
  */
-import { STORAGE_KEYS } from '../config.js';
+import { STORAGE_KEYS } from '../../config.js';
 
 class StorageService {
     constructor() {

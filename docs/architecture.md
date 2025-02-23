@@ -2,15 +2,44 @@
 
 ## Overview
 
-Purple Notes is a modern, modular web application for managing notes and tasks, built with vanilla JavaScript using ES modules.
+Purple Notes is a modern React application for managing notes and tasks, built with Vite as the build tool and bundler.
 
 ## Core Architecture
 
-### Data Layer
+### Build System
+- **Vite**: Fast development server and optimized production builds
+- **ES Modules**: Native browser modules with tree-shaking
+- **Hot Module Replacement**: Fast refresh during development
 
+### Core Files
+- **config.js**: Application-wide configuration and settings management
+- **app.js**: Main React application entry point and component tree initialization
+- **index.html**: Root HTML container for mounting the React application
+
+### React Components
+
+```
+src/
+├── react/
+│   └── components/     # React UI components
+│       ├── notes/      # Notes related components
+│       │   ├── NoteForm   # Note creation component
+│       │   ├── NoteCard   # Individual note display
+│       │   └── NoteList   # Notes collection manager
+│       └── tasks/      # Tasks related components
+│           ├── TaskForm   # Task creation component
+│           ├── TaskItem   # Individual task display
+│           └── TaskList   # Tasks collection manager
+|       ├── models/            # Data models
+|       ├── services/          # Core services
+|       └── utils/            # Utility functions
+├── config          # application-wide configuration and settings management
+
+
+### Data Layer
 - **Models**: Note and Task entities
 - **Services**: Storage, Audio, and Notification handling
-- **State Management**: Local storage persistence
+- **State Management**: React state and local storage persistence
 
 ### Styles Organization
 
@@ -31,23 +60,18 @@ styles/
     └── dialogs.css    # Notifications and modals
 ```
 
-### Components
+## Development Workflow
 
-```
-src/
-├── components/
-│   ├── notes/          # Notes related components
-│   │   ├── NoteForm    # Note creation component
-│   │   ├── NoteCard    # Individual note display
-│   │   └── NoteList    # Notes collection manager
-│   └── tasks/          # Tasks related components
-│       ├── TaskForm    # Task creation component
-│       ├── TaskItem    # Individual task display
-│       └── TaskList    # Tasks collection manager
-├── models/             # Data models
-├── services/           # Core services
-└── utils/             # Utility functions
-```
+### Scripts
+- `npm run dev`: Start development server with HMR
+- `npm run build`: Create production build
+- `npm run preview`: Preview production build locally
+
+### Build Configuration
+- Vite for development and production builds
+- React plugin for JSX compilation
+- CSS modules support
+- Asset optimization
 
 ## Key Features
 
@@ -78,6 +102,12 @@ src/
 
 ## Technical Decisions
 
+### React Architecture
+- Functional components
+- React Hooks for state management
+- Component composition
+- Props for component communication
+
 ### CSS Architecture
 - Modular CSS organization
 - Component-based styling
@@ -86,22 +116,15 @@ src/
 - Mobile-first responsive design
 - Performance optimizations
 
-### ES Modules
-- Native browser modules
-- No build step required
-- Clear dependency management
+### Build System
+- Vite for fast development
+- Optimized production builds
+- Asset optimization
 - Code splitting
 
-### Local Server Requirement
-- Required for ES modules
-- Multiple run options:
-  - npm live-server
-  - VS Code Live Server
-  - Python HTTP server
-
 ### State Management
+- React state hooks
 - Local storage for persistence
-- In-memory state for performance
 - Event-based updates
 - Clean state initialization
 
@@ -110,10 +133,12 @@ src/
 ```
 purple-notes/
 ├── src/               # Source code
-│   ├── components/    # UI components
-│   ├── models/       # Data models
-│   ├── services/     # Core services
-│   └── utils/        # Utility functions
+│   ├── react/         # React components
+│       ├── components/   # UI components
+│       ├── models/        # Data models
+│       ├── services/      # Core services
+│       └── utils/         # Utility functions
+│   ├── config.js        # application-wide configuration and settings
 ├── styles/           # Modular CSS files
 │   ├── base/         # Base styles
 │   ├── layout/       # Layout components
@@ -128,17 +153,17 @@ purple-notes/
 ```
 
 ## Component Communication
-- Event-driven architecture
-- Callback-based updates
+- Props for parent-child communication
+- Context for global state
+- Custom hooks for shared logic
 - Service-based state management
-- DOM event delegation
 
 ## Data Flow
 1. User interactions trigger component handlers
-2. Components communicate with models
-3. Models update through services
-4. Services emit events
-5. Components react to events
+2. Components update React state
+3. State changes trigger re-renders
+4. Services handle side effects
+5. Components react to state changes
 
 ## Style Organization
 
@@ -168,6 +193,12 @@ purple-notes/
 
 ## Performance
 
+### React Optimizations
+- Memo for expensive renders
+- Callback memoization
+- Code splitting
+- Lazy loading
+
 ### CSS Optimizations
 - Modular file organization
 - Efficient selectors
@@ -175,11 +206,11 @@ purple-notes/
 - Hardware-accelerated animations
 - Will-change optimizations
 
-### JavaScript Performance
-- Efficient DOM updates
-- Event delegation
-- Resource cleanup
-- Memory leak prevention
+### Build Optimizations
+- Tree shaking
+- Code splitting
+- Asset optimization
+- Caching strategies
 
 ## Browser Support
 - Modern browsers (Chrome, Firefox, Edge, Safari)
@@ -193,4 +224,4 @@ purple-notes/
 - Service worker
 - Cloud sync
 - Enhanced notifications
-- CSS Module support
+- State management solutions
