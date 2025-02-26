@@ -45,3 +45,12 @@ serve dist
 - Use `npm run dev` for local development with hot-reload
 - Use `npx vite preview` to test production builds locally
 - Use `serve` or similar static file servers for production deployment
+
+## To clean
+```bash
+# ensure rimraf is downloaded
+npm install -g rimraf jest
+
+npm run clean
+
+```
