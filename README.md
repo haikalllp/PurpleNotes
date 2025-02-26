@@ -1,58 +1,76 @@
+---
+title: "Purple Notes: Development Setup with Vite"
+description: "Learn how to set up your development environment for Purple Notes using Vite, including prerequisites, installation, and useful commands."
+---
+
 # Purple Notes
 
-A browser-based notes and tasks application with reminders and theme support.
+A browser-based notes and tasks application with reminders and theme support, now leveraging Vite for an enhanced development experience.
 
-## Quick Start
+## Introduction to Vite and React in the Project
 
-1. **Development Mode**
-   ```bash
-   # Install dependencies
-   npm install
-   ```
-   ```bash
-   # Start development server
-   npm run dev
-   ```
+Vite provides a faster and more efficient development environment for modern web projects. By integrating Vite into Purple Notes, developers can enjoy features like instant server start, hot module replacement (HMR), and optimized build commands. This setup is designed to work seamlessly with React, enabling rapid development and efficient bundling for production.
 
-2. **Production Mode**
-   ```bash
-   # Build for production
-   npx vite build
-   ```
-   ```bash
-   # Preview production build
-   npx vite preview
-   ```
-   ```bash
-   # Serve production build (alternative)
-   npx serve dist
-   ```
+## Getting Started with Vite
 
-## Features
-
-- Create and manage notes with reminders
-- Create and organize tasks with drag-and-drop
-- Light and dark theme support
-- Data persistence using localStorage
-- Responsive design for all devices
-- Modular CSS architecture
-
-## Development Setup
+To begin working with Vite in the Purple Notes project, ensure you have the following prerequisites:
 
 ### Prerequisites
 
-- Node.js and npm installed
-- Modern web browser (Chrome, Firefox, Edge, or Safari)
+- Node.js (version 12.x or higher) and npm installed
+- A modern web browser (Chrome, Firefox, Edge, or Safari)
 
-## Available Scripts
+### Installation
 
-- `npm run dev` - Starts the development server with hot reload
-- `npx vite build` - Creates optimized production build
-- `npx vite preview` - Previews production build locally
-- `npx serve dist` - Serves production build using static server
-- `npm start` - Starts the server without opening browser
+1. Clone the Purple Notes repository to your local machine.
+2. Navigate to the project directory in your terminal.
+3. Install the project dependencies:
+
+```bash
+npm install
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+This command utilizes Vite to launch a local development server with hot module replacement, allowing you to see changes in real-time.
+
+## Development Environment Setup
+
+After installing the necessary dependencies, you can begin developing with the following commands:
+
+### Useful Commands and Scripts
+
+- **Development Mode**: Start the development server with HMR.
+
+```bash
+npm run dev
+```
+
+- **Production Mode**: Build the application for production using Vite's optimized build process.
+
+```bash
+npx vite build
+```
+
+- **Preview Production Build**: Preview the production build locally to ensure everything runs smoothly before deployment.
+
+```bash
+npx vite preview
+```
+
+- **Serve Production Build**: Alternatively, serve your production build using a static server.
+
+```bash
+npx serve dist
+```
 
 ### Project Structure
+
+Understanding the project structure is crucial for efficient development. Here's an overview of the key directories and files:
 
 ```
 purple-notes/
@@ -62,48 +80,27 @@ purple-notes/
 │       ├── models/        # Data models
 │       ├── services/      # Core services
 │       └── utils/         # Utility functions
-│   ├── config.js        # application-wide configuration and settings
-├── styles/           # Modular CSS files
-│   ├── base/         # Base styles
-│   ├── layout/       # Layout components
-│   ├── components/   # Component styles
-│   └── main.css      # CSS entry point
-├── docs/             # Documentation
-├── sounds/           # Audio assets
-├── icons/            # Visual assets
-├── app.js           # Application entry
-├── index.html       # Main HTML
-└── package.json     # Project config
+│   ├── config.js        # Application-wide configuration and settings
+├── styles/            # Modular CSS files
+│   ├── base/          # Base styles
+│   ├── layout/        # Layout components
+│   ├── components/    # Component styles
+│   └── main.css       # CSS entry point
+├── docs/              # Documentation
+├── sounds/            # Audio assets
+├── icons/             # Visual assets
+├── app.js             # Application entry
+├── index.html         # Main HTML
+└── package.json       # Project config
 ```
-
-### CSS Architecture
-
-The project uses a modular CSS architecture:
-
-- **Base Styles** (`styles/base/`)
-  - `variables.css` - Theme variables and custom properties
-  - `reset.css` - Base resets and normalizations
-  - `utils.css` - Shared utilities and animations
-
-- **Layout** (`styles/layout/`)
-  - `grid.css` - Grid system and containers
-  - `header.css` - Header component styles
-  - `footer.css` - Footer component styles
-
-- **Components** (`styles/components/`)
-  - `forms.css` - Form elements and controls
-  - `notes.css` - Note cards and interactions
-  - `tasks.css` - Task list and interactions
-  - `dialogs.css` - Notifications and modals
 
 ## Alternative Run Methods
 
-### Using VS Code Live Server
-1. Install "Live Server" extension
-2. Right-click `index.html`
-3. Select "Open with Live Server"
+For those who prefer not to use the command line, alternative methods to run the project include:
 
-### Using Python HTTP Server
+- **Using VS Code Live Server**: Install the "Live Server" extension, right-click `index.html`, and select "Open with Live Server".
+- **Using Python HTTP Server**:
+
 ```bash
 # Python 3
 python -m http.server 5500
@@ -114,16 +111,7 @@ python -m SimpleHTTPServer 5500
 
 ## Browser Support
 
-- Chrome (Latest)
-- Brave (Latest)
-- Edge (Latest)
-- OperaGX (Latest)
-
-Requirements:
-- CSS Grid support
-- CSS Custom Properties
-- CSS Flexbox
-- Modern JavaScript (ES6+)
+Purple Notes supports the latest versions of Chrome, Brave, Edge, and OperaGX. Ensure your browser supports CSS Grid, Custom Properties, Flexbox, and modern JavaScript (ES6+) for the best experience.
 
 ## Keyboard Shortcuts
 
@@ -133,35 +121,10 @@ Requirements:
 
 ## Important Notes
 
-- The application requires a local server due to ES module restrictions
-- Data is stored in browser's localStorage
-- Clear cache to reset all data
-- CSS is organized in modular files
-- Styles use CSS custom properties for theming
+The application requires a local server due to ES module restrictions and stores data in the browser's localStorage. Clearing the cache resets all data. For styling, CSS is organized in modular files using custom properties for easy theming.
 
 ## Troubleshooting
 
-### Common Issues
+Common issues include module loading errors, data not persisting, server port conflicts, and style issues. Ensure you're running through a local server, localStorage is enabled, and no other server is running on the same port. Clearing the browser cache and verifying browser compatibility can resolve style issues.
 
-1. **Module loading errors**
-   - Ensure you're running through a local server
-   - Don't open index.html directly in browser
-
-2. **Data not persisting**
-   - Check if localStorage is enabled
-   - Ensure you're not in private/incognito mode
-
-3. **Server already in use**
-   - Check if another server is running on port 5500
-   - Close other instances or use a different port
-
-4. **Style issues**
-   - Clear browser cache
-   - Ensure CSS files are loading properly
-   - Check browser console for errors
-   - Verify browser compatibility
-
-For more detailed information:
-- See `howToRun.html` for setup instructions
-- See `docs/architecture.md` for technical details
-- See `docs/update.md` for recent changes
+For more detailed information, refer to `howToRun.html` for setup instructions, `docs/architecture.md` for technical details, and `docs/update.md` for recent changes.
