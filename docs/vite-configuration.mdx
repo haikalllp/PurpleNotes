@@ -1,0 +1,131 @@
+---
+title: Configuring Vite for React Projects
+description: Learn how to effectively configure Vite for your React applications, including server settings, CORS, and ngrok subdomains.
+---
+
+# Configuring Vite for React Projects
+
+## Introduction
+
+Vite is a modern build tool for JavaScript projects, offering a fast development server and optimized production builds. This guide focuses on configuring Vite for React projects, highlighting key configuration options and best practices.
+
+## Getting Started with Vite
+
+To start using Vite in your React project, you first need to set up Vite and install the necessary plugins.
+
+```bash
+npm create vite@latest my-react-app -- --template react
+cd my-react-app
+npm install
+```
+
+This sets up a React project with Vite as the build tool.
+
+## Configuration Options
+
+Vite's configuration is flexible and allows for extensive customization. The configuration file `vite.config.js` is where you define settings specific to your project needs.
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()]
+})
+```
+
+## Server Settings
+
+Vite provides several server settings to customize the development server's behavior.
+
+### Enabling CORS
+
+To enable Cross-Origin Resource Sharing (CORS) in your Vite project, set the `cors` option to `true` in the server configuration.
+
+```typescript
+server: {
+  cors: true
+}
+```
+
+### Configuring Port Settings
+
+You can specify the port on which the development server runs. This is useful if the default port (3000) is already in use.
+
+```typescript
+server: {
+  port: 3500
+}
+```
+
+### Allowing Specific ngrok Subdomains
+
+If you're using ngrok to expose your local server to the internet, you might want to allow specific ngrok subdomains. This is particularly useful for testing webhooks or sharing your work with clients.
+
+```typescript
+server: {
+  allowedHosts: [
+    '.ngrok-free.app',
+    '.ngrok.io'
+  ]
+}
+```
+
+## Best Practices
+
+- **Use Environment Variables**: Store sensitive information and environment-specific settings in `.env` files.
+- **Optimize Plugins**: Only use necessary Vite plugins to keep the build fast.
+- **Code Splitting**: Utilize dynamic imports to split your code into smaller chunks, improving load times.
+- **Asset Optimization**: Leverage Vite's built-in asset optimization features for images, CSS, and JavaScript.
+
+## Examples
+
+### Basic Vite Configuration Example
+
+This example shows a basic Vite configuration for a React project.
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()]
+})
+```
+
+### Advanced Configuration with Plugins
+
+An advanced configuration might include additional plugins and server settings.
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import svgLoader from 'vite-svg-loader'
+
+export default defineConfig({
+  plugins: [react(), svgLoader()],
+  server: {
+    cors: true,
+    port: 3500,
+    allowedHosts: ['.ngrok-free.app', '.ngrok.io']
+  }
+})
+```
+
+### Server Configuration Example
+
+This example focuses on the server configuration, demonstrating how to enable CORS, set a specific port, and allow ngrok subdomains.
+
+```typescript
+server: {
+  cors: true,
+  port: 3500,
+  allowedHosts: [
+    '.ngrok-free.app',
+    '.ngrok.io'
+  ],
+  strictPort: true
+}
+```
+
+By following these guidelines and examples, you can effectively configure Vite for your React projects, ensuring a smooth development experience and optimized production builds.
