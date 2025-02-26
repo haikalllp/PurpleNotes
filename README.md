@@ -1,32 +1,54 @@
+---
+title: Purple Notes Documentation
+description: A comprehensive guide to setting up and running Purple Notes, a browser-based notes and tasks application.
+---
+
 # Purple Notes
 
 A browser-based notes and tasks application with reminders and theme support.
 
-## Quick Start
+## Quick Start with Vite Configuration
+
+Purple Notes now utilizes Vite for an optimized development and build process. Vite provides a faster and more efficient way to serve and build your projects, leveraging modern web technologies.
 
 1. **Development Mode**
+
+   To start the development server with Vite, follow these steps:
+
    ```bash
    # Install dependencies
    npm install
    ```
+
    ```bash
    # Start development server
    npm run dev
    ```
 
+   This command utilizes Vite's development server, offering features like hot module replacement.
+
 2. **Production Mode**
+
+   Building for production is streamlined with Vite:
+
    ```bash
    # Build for production
    npx vite build
    ```
+
    ```bash
    # Preview production build
    npx vite preview
    ```
+
    ```bash
    # Serve production build (alternative)
    npx serve dist
    ```
+
+For developers looking to customize the Vite configuration, see the new `vite.config.js` file. This configuration includes settings for the development server, such as allowed hosts for ngrok tunneling, CORS, and port settings.
+
+For a deep dive into the Vite configuration and how to customize it for your development needs, refer to [Vite Configuration Documentation](./docs/vite-configuration.mdx).
 
 ## Features
 
@@ -46,11 +68,11 @@ A browser-based notes and tasks application with reminders and theme support.
 
 ## Available Scripts
 
-- `npm run dev` - Starts the development server with hot reload
-- `npx vite build` - Creates optimized production build
-- `npx vite preview` - Previews production build locally
-- `npx serve dist` - Serves production build using static server
-- `npm start` - Starts the server without opening browser
+- `npm run dev` - Starts the development server with hot reload, now powered by Vite.
+- `npx vite build` - Creates optimized production build.
+- `npx vite preview` - Previews production build locally.
+- `npx serve dist` - Serves production build using static server.
+- `npm start` - Starts the server without opening browser.
 
 ### Project Structure
 
@@ -111,35 +133,35 @@ Requirements:
 
 ## Important Notes
 
-- The application requires a local server due to ES module restrictions
-- Data is stored in browser's localStorage
-- Clear cache to reset all data
-- CSS is organized in modular files
-- Styles use CSS custom properties for theming
+- The application requires a local server due to ES module restrictions, now facilitated by Vite.
+- Data is stored in browser's localStorage.
+- Clear cache to reset all data.
+- CSS is organized in modular files.
+- Styles use CSS custom properties for theming.
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **Module loading errors**
-   - Ensure you're running through a local server
-   - Don't open index.html directly in browser
+   - Ensure you're running through a local server, such as Vite's development server.
+   - Don't open index.html directly in browser.
 
 2. **Data not persisting**
-   - Check if localStorage is enabled
-   - Ensure you're not in private/incognito mode
+   - Check if localStorage is enabled.
+   - Ensure you're not in private/incognito mode.
 
 3. **Server already in use**
-   - Check if another server is running on port 5500
-   - Close other instances or use a different port
+   - Check if another server is running on the designated port.
+   - Close other instances or use a different port as configured in `vite.config.js`.
 
 4. **Style issues**
-   - Clear browser cache
-   - Ensure CSS files are loading properly
-   - Check browser console for errors
-   - Verify browser compatibility
+   - Clear browser cache.
+   - Ensure CSS files are loading properly.
+   - Check browser console for errors.
+   - Verify browser compatibility.
 
 For more detailed information:
-- See `howToRun.html` for setup instructions
-- See `docs/architecture.md` for app technical architecture details
-- See `docs/update.md` for recent changes
+- See `howToRun.html` for setup instructions.
+- See `docs/architecture.md` for app technical architecture details.
+- See `docs/update.md` for recent changes.
