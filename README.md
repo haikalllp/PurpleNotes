@@ -1,32 +1,59 @@
+---
+title: Purple Notes Documentation
+description: A comprehensive guide to setting up and running Purple Notes, a browser-based notes and tasks application with reminders and theme support.
+---
+
 # Purple Notes
 
 A browser-based notes and tasks application with reminders and theme support.
 
-## Quick Start
+## Quick Start with Vite Configuration
 
-1. **Development Mode**
+To get started with Purple Notes, follow these steps to set up your development environment:
+
+1. **Install Dependencies**
+
+   Run the following command to install the necessary dependencies:
+
    ```bash
-   # Install dependencies
    npm install
    ```
+
+2. **Start Development Server**
+
+   We've recently integrated Vite into our project for a faster and more efficient development experience. To start the development server, use:
+
    ```bash
-   # Start development server
    npm run dev
    ```
 
-2. **Production Mode**
+   This command utilizes Vite's development server, providing features like hot module replacement.
+
+3. **Build for Production**
+
+   To create an optimized production build:
+
    ```bash
-   # Build for production
    npx vite build
    ```
+
+4. **Preview Production Build**
+
+   Preview your production build locally with:
+
    ```bash
-   # Preview production build
    npx vite preview
    ```
+
+5. **Serve Production Build**
+
+   Alternatively, you can serve your production build using a static server:
+
    ```bash
-   # Serve production build (alternative)
    npx serve dist
    ```
+
+For detailed information on configuring Vite for your project, refer to our [Vite Configuration Documentation](./docs/vite-configuration.mdx).
 
 ## Features
 
@@ -46,11 +73,11 @@ A browser-based notes and tasks application with reminders and theme support.
 
 ## Available Scripts
 
-- `npm run dev` - Starts the development server with hot reload
+- `npm run dev` - Starts the development server with hot reload, powered by Vite
 - `npx vite build` - Creates optimized production build
 - `npx vite preview` - Previews production build locally
-- `npx serve dist` - Serves production build using static server
-- `npm start` - Starts the server without opening browser
+- `npx serve dist` - Serves production build using a static server
+- `npm start` - Starts the server without opening the browser
 
 ### Project Structure
 
@@ -99,11 +126,13 @@ The project uses a modular CSS architecture:
 ## Alternative Run Methods
 
 ### Using VS Code Live Server
+
 1. Install "Live Server" extension
 2. Right-click `index.html`
 3. Select "Open with Live Server"
 
 ### Using Python HTTP Server
+
 ```bash
 # Python 3
 python -m http.server 5500
@@ -120,6 +149,7 @@ python -m SimpleHTTPServer 5500
 - OperaGX (Latest)
 
 Requirements:
+
 - CSS Grid support
 - CSS Custom Properties
 - CSS Flexbox
@@ -162,6 +192,7 @@ Requirements:
    - Verify browser compatibility
 
 For more detailed information:
+
 - See `howToRun.html` for setup instructions
 - See `docs/architecture.md` for technical details
 - See `docs/update.md` for recent changes
