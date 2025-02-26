@@ -1,22 +1,23 @@
+---
+title: Purple Notes Architecture
+description: An in-depth look at the architecture of Purple Notes, including its build system, component structure, and development workflow.
+---
+
 # Purple Notes Architecture
 
 ## Overview
 
-Purple Notes is a modern React application for managing notes and tasks, built with Vite as the build tool and bundler.
+Purple Notes is a modern React application for managing notes and tasks, built with Vite as the build tool and bundler. This documentation provides a comprehensive overview of the project's architecture, including its core components, development environment, and key technical decisions.
 
 ## Core Architecture
 
 ### Build System
+
 - **Vite**: Fast development server and optimized production builds
 - **ES Modules**: Native browser modules with tree-shaking
 - **Hot Module Replacement**: Fast refresh during development
 
 ### Core Files
-- **config.js**: Application-wide configuration and settings management
-- **app.js**: Main React application entry point and component tree initialization
-- **index.html**: Root HTML container for mounting the React application
-
-### React Components
 
 ```
 src/
@@ -34,9 +35,10 @@ src/
 |       ├── services/          # Core services
 |       └── utils/            # Utility functions
 ├── config          # application-wide configuration and settings management
-
+```
 
 ### Data Layer
+
 - **Models**: Note and Task entities
 - **Services**: Storage, Audio, and Notification handling
 - **State Management**: React state and local storage persistence
@@ -63,31 +65,72 @@ styles/
 ## Development Workflow
 
 ### Scripts
+
 - `npm run dev`: Start development server with HMR
 - `npm run build`: Create production build
 - `npm run preview`: Preview production build locally
 
 ### Build Configuration
-- Vite for development and production builds
-- React plugin for JSX compilation
-- CSS modules support
-- Asset optimization
+
+- **Vite** for development and production builds
+- **React plugin** for JSX compilation
+- **CSS modules** support
+- **Asset optimization**
+
+## Development Environment Configuration
+
+### Vite Configuration
+
+The project utilizes Vite for both development and production environments, offering a fast development server and optimized builds. The Vite configuration is tailored to enhance the development experience and support the project's specific needs.
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    allowedHosts: [
+      '.ngrok-free.app',
+      '.ngrok.io'
+    ],
+    cors: true,
+    port: 3500,
+    host: 'localhost',
+    strictPort: true
+  }
+})
+```
+
+This configuration includes:
+
+- **React plugin**: Enables JSX compilation.
+- **Server settings**:
+  - **allowedHosts**: Allows any ngrok subdomain, facilitating testing over local tunnels.
+  - **cors**: Enables CORS for development across different origins.
+  - **port**: Sets the development server to run on port 3500.
+  - **host**: Configured to `localhost` for local development. Can be set to `true` to use the network and open the local IP address.
+  - **strictPort**: Ensures the server runs on the specified port or fails to start.
 
 ## Key Features
 
 ### Notes System
+
 - Rich text notes with titles
 - Reminder functionality
 - Pin/unpin capability
 - Local storage persistence
 
 ### Tasks System
+
 - Todo list management
 - Drag-and-drop reordering
 - Completion tracking
 - Visual feedback
 
 ### Theme System
+
 - Light/dark mode support
 - System preference detection
 - Smooth transitions
@@ -95,6 +138,7 @@ styles/
 - CSS custom properties for theming
 
 ### Notifications
+
 - Reminder notifications
 - Sound effects
 - Visual feedback
@@ -103,12 +147,14 @@ styles/
 ## Technical Decisions
 
 ### React Architecture
+
 - Functional components
 - React Hooks for state management
 - Component composition
 - Props for component communication
 
 ### CSS Architecture
+
 - Modular CSS organization
 - Component-based styling
 - Shared utilities and animations
@@ -117,12 +163,14 @@ styles/
 - Performance optimizations
 
 ### Build System
+
 - Vite for fast development
 - Optimized production builds
 - Asset optimization
 - Code splitting
 
 ### State Management
+
 - React state hooks
 - Local storage for persistence
 - Event-based updates
@@ -153,12 +201,14 @@ purple-notes/
 ```
 
 ## Component Communication
+
 - Props for parent-child communication
 - Context for global state
 - Custom hooks for shared logic
 - Service-based state management
 
 ## Data Flow
+
 1. User interactions trigger component handlers
 2. Components update React state
 3. State changes trigger re-renders
@@ -168,24 +218,28 @@ purple-notes/
 ## Style Organization
 
 ### Base Styles
+
 - Variables (CSS custom properties)
 - Reset and normalization
 - Utility classes
 - Shared animations
 
 ### Layout Components
+
 - Grid system
 - Header layout
 - Footer layout
 - Responsive containers
 
 ### UI Components
+
 - Forms and inputs
 - Note cards
 - Task items
 - Dialog modals
 
 ### Responsive Design
+
 - Mobile-first approach
 - Breakpoint management
 - Flexible layouts
@@ -194,12 +248,14 @@ purple-notes/
 ## Performance
 
 ### React Optimizations
+
 - Memo for expensive renders
 - Callback memoization
 - Code splitting
 - Lazy loading
 
 ### CSS Optimizations
+
 - Modular file organization
 - Efficient selectors
 - Reduced specificity conflicts
@@ -207,12 +263,14 @@ purple-notes/
 - Will-change optimizations
 
 ### Build Optimizations
+
 - Tree shaking
 - Code splitting
 - Asset optimization
 - Caching strategies
 
 ## Browser Support
+
 - Modern browsers (Chrome, Firefox, Edge, Safari)
 - ES6+ features
 - Local storage capability
@@ -220,6 +278,7 @@ purple-notes/
 - CSS Custom Properties
 
 ## Future Considerations
+
 - PWA implementation
 - Service worker
 - Cloud sync
