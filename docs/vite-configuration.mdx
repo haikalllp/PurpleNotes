@@ -1,0 +1,121 @@
+---
+title: Configuring Vite for React Projects
+description: Learn how to configure Vite for optimal development and production builds in React projects, including server settings, CORS, and plugin integration.
+---
+
+# Configuring Vite for React Projects
+
+## Introduction
+
+Vite is a modern build tool for web projects, offering fast development startup and optimized production builds. This documentation covers the configuration of Vite for React projects, focusing on the setup and customization options that enhance the development workflow.
+
+## Getting Started
+
+To begin with Vite in a React project, you first need to set up Vite. If you're starting a new project, you can do so by running:
+
+```bash
+npm create vite@latest my-react-app --template react
+```
+
+For existing projects, you can install Vite and the necessary plugins via npm:
+
+```bash
+npm install vite @vitejs/plugin-react
+```
+
+## Configuration Options
+
+Vite is highly configurable. The `vite.config.js` file is where you define your project's build and development server settings. Here's a basic configuration example for a React project:
+
+```javascript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()]
+})
+```
+
+## Plugins
+
+Vite uses plugins to extend its functionality. The `@vitejs/plugin-react` is essential for React projects as it adds JSX support and other optimizations. You can add more plugins as needed for your project.
+
+## Server Options
+
+Vite provides several server options to customize the development server. These options can be defined within the `server` field of the `vite.config.js` file.
+
+### Allowed Hosts for ngrok Subdomains
+
+To allow any ngrok subdomain, you can use the `allowedHosts` option:
+
+```javascript
+server: {
+  allowedHosts: [
+    '.ngrok-free.app',
+    '.ngrok.io'
+  ]
+}
+```
+
+### CORS Settings
+
+Enabling CORS is straightforward with the `cors` option:
+
+```javascript
+server: {
+  cors: true
+}
+```
+
+### Port and Host Settings
+
+You can specify the port and host of the development server. Setting the host to `true` allows network access, useful for testing on other devices:
+
+```javascript
+server: {
+  port: 3500,
+  host: 'localhost'
+}
+```
+
+## Integrating with Existing Projects
+
+Integrating Vite into an existing React project involves installing Vite and the React plugin, then configuring the `vite.config.js` file as shown in the examples above. You may need to adjust your project's structure and scripts for compatibility with Vite.
+
+## Examples
+
+### Basic Vite Configuration Example
+
+A simple Vite configuration for React projects includes the React plugin and specifies the root directory:
+
+```javascript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()]
+})
+```
+
+### Configuring Server Options
+
+Customizing the development server to use a specific port and enable CORS:
+
+```javascript
+server: {
+  cors: true,
+  port: 3500
+}
+```
+
+### Setting Up CORS for Development
+
+To enable CORS for development purposes, simply set the `cors` option to `true`:
+
+```javascript
+server: {
+  cors: true
+}
+```
+
+This documentation provides a foundational understanding of configuring Vite for React projects. For more detailed information on Vite's configuration options, refer to the [official Vite documentation](https://vitejs.dev/config/).
