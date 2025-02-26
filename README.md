@@ -1,3 +1,8 @@
+---
+title: Purple Notes Documentation
+description: Comprehensive guide on setting up and using Purple Notes, a browser-based notes and tasks application.
+---
+
 # Purple Notes
 
 A browser-based notes and tasks application with reminders and theme support.
@@ -43,6 +48,17 @@ A browser-based notes and tasks application with reminders and theme support.
 
 - Node.js and npm installed
 - Modern web browser (Chrome, Firefox, Edge, or Safari)
+
+## Vite Configuration
+
+We've recently updated our Vite configuration to enhance development and production workflows. The new configuration includes:
+
+- React fast refresh for an improved development experience.
+- Custom server settings to allow access from ngrok subdomains, enabling easier testing on mobile devices.
+- CORS enabled by default to support API requests from different origins.
+- A fixed port (`3500`) for predictable access and strict port usage to avoid conflicts.
+
+For a detailed guide on how to customize this configuration for your needs, refer to our [Vite Configuration Documentation](docs/vite-configuration.mdx).
 
 ## Available Scripts
 
