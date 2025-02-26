@@ -1,0 +1,105 @@
+---
+title: Setting Up Your Development Environment with Vite
+description: A comprehensive guide to configuring Vite for React development, including server settings, CORS, and ngrok subdomain support.
+---
+
+## Introduction
+
+Vite is a modern build tool for web projects, offering a fast development server and optimized production builds. This guide focuses on setting up Vite for React development, particularly emphasizing server configurations, CORS settings, and support for ngrok subdomains.
+
+## Prerequisites
+
+Before proceeding, ensure you have the following installed:
+- Node.js (version 12 or higher)
+- npm/yarn
+- Basic understanding of React and Vite
+
+## Configuration Overview
+
+Vite's configuration is flexible, allowing developers to tailor the development environment to their project's needs. The `vite.config.js` file is where most of this configuration happens.
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    allowedHosts: ['.ngrok-free.app', '.ngrok.io'],
+    cors: true,
+    port: 3500,
+    host: 'localhost',
+    strictPort: true
+  }
+})
+```
+
+## React Support
+
+The `@vitejs/plugin-react` plugin integrates React support into Vite, enabling features like fast refresh and JSX compilation.
+
+```typescript
+plugins: [react()]
+```
+
+## CORS Configuration
+
+Enabling CORS (Cross-Origin Resource Sharing) is crucial for development environments where the frontend and backend are served from different origins.
+
+```typescript
+server: {
+  cors: true
+}
+```
+
+## Server Settings
+
+Customizing the Vite server settings can enhance your development workflow. The configuration allows setting the host, port, and whether to enforce the port strictly.
+
+```typescript
+server: {
+  port: 3500,
+  host: 'localhost',
+  strictPort: true
+}
+```
+
+## Allowed Hosts for ngrok Subdomains
+
+To facilitate development and testing through tunnels like ngrok, Vite can be configured to allow specific subdomains.
+
+```typescript
+server: {
+  allowedHosts: ['.ngrok-free.app', '.ngrok.io']
+}
+```
+
+## Fixed Port and Strict Port Usage
+
+Using a fixed port can be helpful to avoid conflicts with other services, and the `strictPort` setting ensures Vite will not try to use a different port if the specified one is in use.
+
+```typescript
+server: {
+  port: 3500,
+  strictPort: true
+}
+```
+
+## Troubleshooting
+
+- **Port Already in Use**: Ensure no other service is running on the same port or change the port in the Vite configuration.
+- **CORS Errors**: Verify that CORS is enabled in the Vite server settings and check for correct backend configuration.
+
+## FAQ
+
+**Q: Can I use Vite with frameworks other than React?**  
+A: Yes, Vite supports various frameworks through plugins, such as Vue, Svelte, and more.
+
+**Q: How do I enable HTTPS for local development?**  
+A: Vite supports HTTPS out of the box. You can provide your own SSL certificates in the server configuration.
+
+**Q: What is ngrok and why would I use it with Vite?**  
+A: ngrok is a tool that creates a secure tunnel to your localhost, allowing you to share your local server over the internet. This is particularly useful for testing on mobile devices or sharing your work with clients or colleagues.
+
+For more detailed information on Vite's configuration options, refer to the [official Vite documentation](https://vitejs.dev/config/).
