@@ -1,167 +1,88 @@
+---
+title: Purple Notes - A Vite and React Powered Note-Taking App
+description: Get started with Purple Notes, now powered by Vite and React for an enhanced development experience and performance.
+---
+
 # Purple Notes
 
-A browser-based notes and tasks application with reminders and theme support.
+A browser-based notes and tasks application with reminders and theme support, now leveraging the power of Vite and React for a modern, efficient development workflow and enhanced user experience.
 
-## Quick Start
+## Introduction to the New Stack
+
+Purple Notes has transitioned to a new technology stack, embracing Vite as its build tool and React for the UI. This change aims to improve the development experience with faster builds, hot module replacement, and a more intuitive component-based architecture for building user interfaces.
+
+- **Vite**: A modern build tool that significantly improves the development server start time and offers out-of-the-box support for TypeScript, JSX, CSS, and more.
+- **React**: A JavaScript library for building user interfaces, enabling the development of dynamic, high-performance web applications with a component-based architecture.
+
+## Quick Start with Vite and React
+
+To get started with the new Purple Notes, follow these steps to set up your development environment:
 
 1. **Development Mode**
+
+   Ensure you have Node.js (version 12.x or higher) and npm installed on your system.
+
    ```bash
    # Install dependencies
    npm install
    ```
+
    ```bash
-   # Start development server
+   # Start the Vite development server
    npm run dev
    ```
 
 2. **Production Mode**
+
+   Build and preview your application with Vite's optimized production build tools.
+
    ```bash
    # Build for production
    npx vite build
    ```
+
    ```bash
    # Preview production build
    npx vite preview
    ```
+
+   Alternatively, serve your production build using a static server:
+
    ```bash
-   # Serve production build (alternative)
+   # Serve production build
    npx serve dist
    ```
 
 ## Features
 
-- Create and manage notes with reminders
-- Create and organize tasks with drag-and-drop
-- Light and dark theme support
-- Data persistence using localStorage
-- Responsive design for all devices
-- Modular CSS architecture
+- Create and manage notes with reminders.
+- Organize tasks with drag-and-drop functionality.
+- Light and dark theme support for user preference.
+- Data persistence using localStorage for offline access.
+- Responsive design ensures a seamless experience on all devices.
+- Modular CSS architecture for maintainable and scalable styling.
 
 ## Development Setup
 
 ### Prerequisites
 
-- Node.js and npm installed
-- Modern web browser (Chrome, Firefox, Edge, or Safari)
+- Node.js and npm installed on your machine.
+- A modern web browser (Chrome, Firefox, Edge, or Safari) for testing.
 
 ## Available Scripts
 
-- `npm run dev` - Starts the development server with hot reload
-- `npx vite build` - Creates optimized production build
-- `npx vite preview` - Previews production build locally
-- `npx serve dist` - Serves production build using static server
-- `npm start` - Starts the server without opening browser
+- `npm run dev`: Starts the Vite development server with hot reload enabled.
+- `npx vite build`: Creates an optimized production build.
+- `npx vite preview`: Previews the production build locally.
+- `npx serve dist`: Serves the production build using a static server.
+- `npm start`: Starts the server without automatically opening the browser.
 
-### Project Structure
+## Links to Detailed Guides
 
-```
-purple-notes/
-├── src/               # Source code
-│   ├── react/         # React components
-│       ├── components/   # UI components
-│       ├── models/        # Data models
-│       ├── services/      # Core services
-│       └── utils/         # Utility functions
-│   ├── config.js        # application-wide configuration and settings
-├── styles/           # Modular CSS files
-│   ├── base/         # Base styles
-│   ├── layout/       # Layout components
-│   ├── components/   # Component styles
-│   └── main.css      # CSS entry point
-├── docs/             # Documentation
-├── sounds/           # Audio assets
-├── icons/            # Visual assets
-├── app.js           # Application entry
-├── index.html       # Main HTML
-└── package.json     # Project config
-```
+For more in-depth information on setup, configuration, and migration to the new stack, please refer to the following resources:
 
-### CSS Architecture
+- [Architecture Overview](docs/architecture.md): Detailed breakdown of the new application architecture with Vite and React.
+- [Update Guide](docs/update.md): Step-by-step instructions for migrating to the new version of Purple Notes.
+- [Vite Configuration](docs/vite-configuration.mdx) (planned): Comprehensive guide to configuring Vite for optimal development and production builds.
 
-The project uses a modular CSS architecture:
-
-- **Base Styles** (`styles/base/`)
-  - `variables.css` - Theme variables and custom properties
-  - `reset.css` - Base resets and normalizations
-  - `utils.css` - Shared utilities and animations
-
-- **Layout** (`styles/layout/`)
-  - `grid.css` - Grid system and containers
-  - `header.css` - Header component styles
-  - `footer.css` - Footer component styles
-
-- **Components** (`styles/components/`)
-  - `forms.css` - Form elements and controls
-  - `notes.css` - Note cards and interactions
-  - `tasks.css` - Task list and interactions
-  - `dialogs.css` - Notifications and modals
-
-## Alternative Run Methods
-
-### Using VS Code Live Server
-1. Install "Live Server" extension
-2. Right-click `index.html`
-3. Select "Open with Live Server"
-
-### Using Python HTTP Server
-```bash
-# Python 3
-python -m http.server 5500
-
-# Python 2
-python -m SimpleHTTPServer 5500
-```
-
-## Browser Support
-
-- Chrome (Latest)
-- Brave (Latest)
-- Edge (Latest)
-- OperaGX (Latest)
-
-Requirements:
-- CSS Grid support
-- CSS Custom Properties
-- CSS Flexbox
-- Modern JavaScript (ES6+)
-
-## Keyboard Shortcuts
-
-- `Ctrl/Cmd + N`: Focus note input
-- `Ctrl/Cmd + T`: Focus task input
-- `Escape`: Close dialogs
-
-## Important Notes
-
-- The application requires a local server due to ES module restrictions
-- Data is stored in browser's localStorage
-- Clear cache to reset all data
-- CSS is organized in modular files
-- Styles use CSS custom properties for theming
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Module loading errors**
-   - Ensure you're running through a local server
-   - Don't open index.html directly in browser
-
-2. **Data not persisting**
-   - Check if localStorage is enabled
-   - Ensure you're not in private/incognito mode
-
-3. **Server already in use**
-   - Check if another server is running on port 5500
-   - Close other instances or use a different port
-
-4. **Style issues**
-   - Clear browser cache
-   - Ensure CSS files are loading properly
-   - Check browser console for errors
-   - Verify browser compatibility
-
-For more detailed information:
-- See `howToRun.html` for setup instructions
-- See `docs/architecture.md` for technical details
-- See `docs/update.md` for recent changes
+By following these guides, you'll be well-equipped to take full advantage of the new technology stack and contribute to the Purple Notes project.
