@@ -96,22 +96,6 @@ The project uses a modular CSS architecture:
   - `tasks.css` - Task list and interactions
   - `dialogs.css` - Notifications and modals
 
-## Alternative Run Methods
-
-### Using VS Code Live Server
-1. Install "Live Server" extension
-2. Right-click `index.html`
-3. Select "Open with Live Server"
-
-### Using Python HTTP Server
-```bash
-# Python 3
-python -m http.server 5500
-
-# Python 2
-python -m SimpleHTTPServer 5500
-```
-
 ## Browser Support
 
 - Chrome (Latest)
@@ -124,12 +108,6 @@ Requirements:
 - CSS Custom Properties
 - CSS Flexbox
 - Modern JavaScript (ES6+)
-
-## Keyboard Shortcuts
-
-- `Ctrl/Cmd + N`: Focus note input
-- `Ctrl/Cmd + T`: Focus task input
-- `Escape`: Close dialogs
 
 ## Important Notes
 
@@ -163,5 +141,5 @@ Requirements:
 
 For more detailed information:
 - See `howToRun.html` for setup instructions
-- See `docs/architecture.md` for technical details
+- See `docs/architecture.md` for app technical architecture details
 - See `docs/update.md` for recent changes
