@@ -1,3 +1,8 @@
+---
+title: Purple Notes Update Documentation
+description: Documentation detailing the latest updates to the Purple Notes development environment, including the migration to Vite and React.
+---
+
 # Purple Notes Update Documentation
 
 ## Latest Changes (January 30, 2025)
@@ -10,6 +15,7 @@
 - ✅ Added hot module replacement
 
 ### 2. Project Structure
+
 ```
 src/
 ├── react/
@@ -18,12 +24,13 @@ src/
 │   ├── services/     # Business logic
 │   └── utils/        # Helper functions
 ├── config.js         # App configuration
-└── styles/          # CSS modules
+└── styles/           # CSS modules
 ```
 
 ### 3. Run Commands
 
 #### Development Mode
+
 ```bash
 # Install dependencies
 npm install
@@ -33,6 +40,7 @@ npm run dev
 ```
 
 #### Production Mode
+
 ```bash
 # Build for production
 npx vite build
@@ -44,7 +52,35 @@ npx vite preview
 npx serve dist
 ```
 
-### 4. Previous Updates (January 29, 2025)
+### 4. Vite Configuration
+
+A new `vite.config.js` file has been added to the project to enhance the development experience with Vite. This configuration includes:
+
+- React plugin integration for JSX support
+- CORS enabled for easier development across different domains
+- Custom server settings including allowed hosts for ngrok tunnels, a fixed port (3500), and strict port usage
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    allowedHosts: [
+      '.ngrok-free.app',
+      '.ngrok.io'
+    ],
+    cors: true,
+    port: 3500,
+    host: 'localhost',
+    strictPort: true
+  }
+})
+```
+
+### 5. Previous Updates (January 29, 2025)
 
 #### CSS Modularization
 - ✅ Reorganized CSS into modular structure
@@ -54,6 +90,7 @@ npx serve dist
 - ✅ Enhanced responsive design organization
 
 #### Style Structure
+
 ```
 styles/
 ├── base/
@@ -61,18 +98,18 @@ styles/
 │   ├── reset.css       # Base resets
 │   └── utils.css       # Shared utilities
 ├── layout/
-│   ├── grid.css       # Layout system
-│   ├── header.css     # Header styles
-│   └── footer.css     # Footer styles
+│   ├── grid.css        # Layout system
+│   ├── header.css      # Header styles
+│   └── footer.css      # Footer styles
 ├── components/
-│   ├── forms.css      # Form styles
-│   ├── notes.css      # Notes styles
-│   ├── tasks.css      # Tasks styles
-│   └── dialogs.css    # Dialog styles
-└── main.css           # Style imports
+│   ├── forms.css       # Form styles
+│   ├── notes.css       # Notes styles
+│   ├── tasks.css       # Tasks styles
+│   └── dialogs.css     # Dialog styles
+└── main.css            # Style imports
 ```
 
-### 5. Fixed Issues
+### 6. Fixed Issues
 
 #### Core Functionality
 - ✅ React component rendering
@@ -88,7 +125,7 @@ styles/
 - ✅ Asset optimization
 - ✅ Code splitting
 
-### 6. Testing Procedures
+### 7. Testing Procedures
 
 #### Component Testing
 1. Unit Tests
@@ -106,14 +143,14 @@ styles/
    - Production builds
    - Asset loading
 
-### 7. Known Limitations
+### 8. Known Limitations
 1. Requires Node.js installed
 2. Requires modern browser
 3. JavaScript must be enabled
 4. React DevTools recommended for debugging
 5. Minimum browser versions for React 18
 
-### 8. Future Improvements
+### 9. Future Improvements
 1. TypeScript migration
 2. Component testing setup
 3. State management solution
@@ -121,3 +158,6 @@ styles/
 5. Progressive Web App features
 
 For more detailed architecture information, see docs/architecture.md
+
+Related Documentation:
+- docs/vite-configuration.mdx (planned)
