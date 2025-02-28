@@ -1,4 +1,62 @@
-# Purple Notes Update Documentation
+---
+
+title: "Vite Configuration for React Projects"
+
+description: "Documentation for Vite configuration settings, including server settings and allowed hosts for ngrok."
+
+---
+
+## Overview of Vite
+
+Vite is a modern build tool that provides a faster and more efficient development experience for React applications. It leverages native ES modules in the browser and provides features like hot module replacement (HMR) out of the box.
+
+## Configuration Settings
+
+The Vite configuration file (`vite.config.js`) allows you to customize various settings for your development server and build process. Below is an example of a basic Vite configuration:
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    allowedHosts: [
+      '.ngrok-free.app',
+      '.ngrok.io'
+    ],
+    cors: true,
+    port: 3500,
+    host: 'localhost',
+    strictPort: true
+  }
+})
+```
+
+## Allowed Hosts for ngrok
+
+The `allowedHosts` setting in the server configuration allows you to specify which hosts are permitted to access your development server. This is particularly useful when using services like ngrok for tunneling.
+
+## CORS Configuration
+
+To enable Cross-Origin Resource Sharing (CORS), set the `cors` option to `true`. This allows your application to accept requests from different origins, which is essential for development environments that may involve multiple domains.
+
+## Example Configuration
+
+Here is a minimal example of a Vite configuration that includes the server settings:
+
+```typescript
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  server: {
+    host: true,
+    port: 3000,
+    cors: true
+  }
+});
+```
 
 ## Latest Changes (January 30, 2025)
 
@@ -10,6 +68,7 @@
 - ✅ Added hot module replacement
 
 ### 2. Project Structure
+
 ```
 src/
 ├── react/
@@ -18,12 +77,13 @@ src/
 │   ├── services/     # Business logic
 │   └── utils/        # Helper functions
 ├── config.js         # App configuration
-└── styles/          # CSS modules
+└── styles/           # CSS modules
 ```
 
 ### 3. Run Commands
 
 #### Development Mode
+
 ```bash
 # Install dependencies
 npm install
@@ -33,6 +93,7 @@ npm run dev
 ```
 
 #### Production Mode
+
 ```bash
 # Build for production
 npx vite build
@@ -54,6 +115,7 @@ npx serve dist
 - ✅ Enhanced responsive design organization
 
 #### Style Structure
+
 ```
 styles/
 ├── base/
