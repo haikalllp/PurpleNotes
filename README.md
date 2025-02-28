@@ -1,3 +1,11 @@
+---
+
+title: "Purple Notes"
+
+description: "A browser-based notes and tasks application with reminders and theme support."
+
+---
+
 # Purple Notes
 
 A browser-based notes and tasks application with reminders and theme support.
@@ -9,6 +17,7 @@ A browser-based notes and tasks application with reminders and theme support.
    # Install dependencies
    npm install
    ```
+
    ```bash
    # Start development server
    npm run dev
@@ -19,10 +28,12 @@ A browser-based notes and tasks application with reminders and theme support.
    # Build for production
    npx vite build
    ```
+
    ```bash
    # Preview production build
    npx vite preview
    ```
+
    ```bash
    # Serve production build (alternative)
    npx serve dist
@@ -43,6 +54,50 @@ A browser-based notes and tasks application with reminders and theme support.
 
 - Node.js and npm installed
 - Modern web browser (Chrome, Firefox, Edge, or Safari)
+
+## Vite Configuration
+
+### Installation Instructions
+
+To set up Vite for your development environment, ensure you have Vite installed:
+
+```bash
+npm install vite
+```
+
+### Basic Configuration
+
+Create a `vite.config.js` file in the root of your project with the following configuration:
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    allowedHosts: [ // added to allow any ngrok subdomain
+      '.ngrok-free.app',
+      '.ngrok.io'
+    ],
+    cors: true, // Enable CORS
+    port: 3500,
+    host: 'localhost', // set to true to use network and open the local IP address
+    strictPort: true
+  }
+})
+```
+
+### Running the Development Server
+
+Once Vite is configured, you can start the development server:
+
+```bash
+npm run dev
+```
+
+This will launch the application on `localhost:3500` with hot reloading enabled.
 
 ## Available Scripts
 
