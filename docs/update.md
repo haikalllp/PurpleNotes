@@ -1,123 +1,55 @@
-# Purple Notes Update Documentation
+---
 
-## Latest Changes (January 30, 2025)
+title: "Recent Updates to Project Configuration"
 
-### 1. Migration to Vite and React
-- ✅ Migrated to Vite build system
-- ✅ Converted to React components
-- ✅ Improved build performance
-- ✅ Enhanced development experience
-- ✅ Added hot module replacement
+---
 
-### 2. Project Structure
-```
-src/
-├── react/
-│   ├── components/   # React components
-│   ├── models/       # Data models
-│   ├── services/     # Business logic
-│   └── utils/        # Helper functions
-├── config.js         # App configuration
-└── styles/          # CSS modules
-```
+## Introduction to Vite
 
-### 3. Run Commands
+As part of our ongoing efforts to enhance the development experience and improve build performance, we have migrated our project to use Vite as the build system. Vite offers a fast and optimized development environment, leveraging native ES modules and providing features such as hot module replacement out of the box.
 
-#### Development Mode
-```bash
-# Install dependencies
-npm install
+## New Vite Configuration File
 
-# Start development server
-npm run dev
-```
+We have added a new Vite configuration file, `vite.config.js`, which is crucial for setting up the development server and configuring plugins. Below is the content of the newly added configuration file:
 
-#### Production Mode
-```bash
-# Build for production
-npx vite build
+```javascript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-# Preview production build
-npx vite preview
-
-# Serve production build
-npx serve dist
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    allowedHosts: [ // added to allow any ngrok subdomain
+      '.ngrok-free.app',
+      '.ngrok.io'
+    ],
+    cors: true, // Enable CORS
+    port: 3500,
+    host: 'localhost', // set to true to use network and open the local IP address
+    strictPort: true
+  }
+})
 ```
 
-### 4. Previous Updates (January 29, 2025)
+### Configuration Details
 
-#### CSS Modularization
-- ✅ Reorganized CSS into modular structure
-- ✅ Created base, layout, and component styles
-- ✅ Centralized animations and utilities
-- ✅ Improved style maintainability
-- ✅ Enhanced responsive design organization
+- **Plugins**: The configuration includes the React plugin to enable JSX support.
+- **Server Settings**: 
+  - `allowedHosts`: Configured to allow connections from specific ngrok subdomains.
+  - `cors`: CORS is enabled to facilitate cross-origin requests.
+  - `port`: The development server runs on port 3500.
+  - `host`: Set to 'localhost' for local development, with an option to use the network IP.
+  - `strictPort`: Ensures the server does not start if the specified port is already in use.
 
-#### Style Structure
-```
-styles/
-├── base/
-│   ├── variables.css   # Theme variables
-│   ├── reset.css       # Base resets
-│   └── utils.css       # Shared utilities
-├── layout/
-│   ├── grid.css       # Layout system
-│   ├── header.css     # Header styles
-│   └── footer.css     # Footer styles
-├── components/
-│   ├── forms.css      # Form styles
-│   ├── notes.css      # Notes styles
-│   ├── tasks.css      # Tasks styles
-│   └── dialogs.css    # Dialog styles
-└── main.css           # Style imports
-```
+## Impact on Development Workflow
 
-### 5. Fixed Issues
+The addition of the Vite configuration file significantly enhances our development workflow by:
 
-#### Core Functionality
-- ✅ React component rendering
-- ✅ State management
-- ✅ Component lifecycle
-- ✅ Event handling
-- ✅ Data persistence
+- Providing a faster development server with hot module replacement, allowing for real-time updates without full page reloads.
+- Simplifying the configuration of server settings, including CORS and allowed hosts, which is particularly useful for testing with services like ngrok.
+- Streamlining the build process, resulting in improved performance and reduced build times.
 
-#### Build System
-- ✅ Vite configuration
-- ✅ Development server
-- ✅ Production builds
-- ✅ Asset optimization
-- ✅ Code splitting
+With these changes, developers can expect a more efficient and enjoyable coding experience as we continue to build and expand our application.
 
-### 6. Testing Procedures
-
-#### Component Testing
-1. Unit Tests
-   - Component rendering
-   - State updates
-   - Event handlers
-
-2. Integration Tests
-   - Component interactions
-   - Data flow
-   - Side effects
-
-3. Build Testing
-   - Development builds
-   - Production builds
-   - Asset loading
-
-### 7. Known Limitations
-1. Requires Node.js installed
-2. Requires modern browser
-3. JavaScript must be enabled
-4. React DevTools recommended for debugging
-5. Minimum browser versions for React 18
-
-### 8. Future Improvements
-1. TypeScript migration
-2. Component testing setup
-3. State management solution
-4. Performance optimizations
-5. Progressive Web App features
-
-For more detailed architecture information, see docs/architecture.md
+For more detailed architecture information, see [docs/architecture.md](docs/architecture.md).
